@@ -1,4 +1,4 @@
-# Luke's build of dwm
+# cf's build of dwm
 
 ## FAQ
 
@@ -28,7 +28,7 @@ I haven't kept `man dwm`/`dwm.1` updated though. PRs welcome on that, lol.
 ## Installation for newbs
 
 ```bash
-git clone https://github.com/LukeSmithxyz/dwm.git
+git clone https://github.com/cf-tgg/cf.dwm.git
 cd dwm
 sudo make install
 ```
