@@ -1,6 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 
 /* Constants */
+#include <X11/X.h>
 #define TERMINAL "st"
 #define TERMCLASS "St"
 #define BROWSER "qutebrowser"
@@ -15,13 +16,16 @@ static unsigned int gappoh =
 static unsigned int gappov =
     0; /* vert outer gap between windows and screen edge */
 static int swallowfloating =
-    0; /* 1 means swallow floating windows by default */
+    1; /* 1 means swallow floating windows by default */
 static int smartgaps =
     0;                  /* 1 means no outer gap when there is only one window */
 static int showbar = 1; /* 0 means no bar */
 static int topbar = 1;  /* 0 means bottom bar */
 static char *fonts[] = {
-    "Libertinus Mono:size=12",
+    // "DejaVu Sans Mono:size=12",
+    // "Source Code Pro:size=12",
+    "Libertinus Mono:size=11", "monospace:size=10",
+    "Font Awesome 6:pixelsize=24:antialias=true:autohint=true",
     "NotoColorEmoji:pixelsize=20:antialias=true:autohint=true"};
 static char normbgcolor[] = "#010101";
 static char normbordercolor[] = "#0d0d0d";
@@ -39,7 +43,7 @@ typedef struct {
   const char *name;
   const void *cmd;
 } Sp;
-const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "120x30", NULL};
+const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "100x30", NULL};
 const char *spcmd2[] = {TERMINAL, "-n",   "spcalc", "-f", "monospace:size=40",
                         "-g",     "12x8", "-e",     "bc", "-lq",
                         NULL};
@@ -60,7 +64,10 @@ static const Rule rules[] = {
      */
     /* class    instance      title       	 tags mask    isfloating
        isterminal  noswallow  monitor */
-    {"Gimp", NULL, NULL, 1 << 8, 0, 0, 0, -1},
+    {"Gimp", NULL, NULL, 1 << 4, 0, 0, 0, -1},
+    {"Blender", NULL, NULL, 1 << 4, 0, 0, 0, -1},
+    {"firefox", NULL, NULL, 1 << 2, 0, 0, 0, -1},
+    {"surf", NULL, NULL, 1 << 2, 0, 0, 0, -1},
     {TERMCLASS, NULL, NULL, 0, 0, 1, 0, -1},
     {NULL, NULL, "Event Tester", 0, 0, 0, 1, -1},
     {TERMCLASS, "floatterm", NULL, 0, 1, 1, 0, -1},
@@ -68,6 +75,11 @@ static const Rule rules[] = {
     {TERMCLASS, "spterm", NULL, SPTAG(0), 1, 1, 0, -1},
     {TERMCLASS, "spcalc", NULL, SPTAG(1), 1, 1, 0, -1},
 };
+
+/* window swallowing */
+static const int swaldecay = 3;
+static const int swalretroactive = 1;
+static const char swalsymbol[] = "👅";
 
 /* layout(s) */
 static float mfact = 0.50;  /* factor of master area size [0.05..0.95] */
@@ -343,6 +355,7 @@ static const Key keys[] = {
     {MODKEY | ControlMask, XK_Down, spawn,
      SHCMD("xrandr --output eDP-1 --rotate normal && setbg")},
 
+    {MODKEY | ControlMask, XK_u, swalstopsel, {0}},
     {MODKEY, XK_Page_Up, shiftview, {.i = -1}},
     {MODKEY | ShiftMask, XK_Page_Up, shifttag, {.i = -1}},
     {MODKEY, XK_Page_Down, shiftview, {.i = +1}},
@@ -520,6 +533,7 @@ static const Button buttons[] = {
        {.i = -1} },*/
     {ClkClientWin, MODKEY, Button4, spawn, SHCMD("transset-df -p --inc .05")},
     {ClkClientWin, MODKEY, Button5, spawn, SHCMD("transset-df -p --dec .05")},
+    {ClkClientWin, MODKEY | ControlMask, Button1, swalmouse, {0}},
     {ClkTagBar, 0, Button1, view, {0}},
     {ClkTagBar, 0, Button3, toggleview, {0}},
     {ClkTagBar, MODKEY, Button1, tag, {0}},
