@@ -23,7 +23,7 @@ I haven't kept `man dwm`/`dwm.1` updated though. PRs welcome on that, lol.
 - [shiftview](https://dwm.suckless.org/patches/nextprev/): Cycle through tags (<kbd>super+g/;</kbd>).
 - [vanitygaps](https://dwm.suckless.org/patches/vanitygaps/): Gaps allowed across all layouts.
 - [swallow patch](https://dwm.suckless.org/patches/swallow/): if a program run from a terminal would make it inoperable, it temporarily takes its place to save space.
-
+- [dwm-dynamicswallow-patch](https://dwm.suckless.org/patches/dynamicswallow/): introduces "dynamic" window swallowing to dwm. 
 
 ## Installation for newbs
 
