@@ -2,6 +2,7 @@
 
 /* Constants */
 #include <X11/X.h>
+#include <stddef.h>
 #define TERMINAL "st"
 #define TERMCLASS "St"
 #define BROWSER "qutebrowser"
@@ -22,6 +23,10 @@ static int smartgaps =
 static int showbar = 1; /* 0 means no bar */
 static int topbar = 1;  /* 0 means bottom bar */
 static const double defaultopacity = 0.90;
+static const double activeopacity =
+    0.9f; /* Window opacity when it's focused (0 <= opacity <= 1) */
+static const double inactiveopacity =
+    0.7f; /* Window opacity when it's inactive (0 <= opacity <= 1) */
 static char *fonts[] = {
     // "DejaVu Sans Mono:size=12",
     // "Source Code Pro:size=12",
@@ -65,25 +70,40 @@ static Sp scratchpads[] = {
 static const char *tags[] = {"", "", "",  "", "",
                              "", "", " ", ""};
 
+// static const Rule rules[] = {
+//     /* xprop(1):
+//      *	WM_CLASS(STRING) = instance, class
+//      *	WM_NAME(STRING) = title
+//      */
+//     /* class      instance    title       tags mask     isfloating
+//     focusopacity
+//        unfocusopacity isterminal noswallow monitor*/
+//     {"Gimp", NULL, NULL, 1 << 4, 0, 0, 0},
+//     {"Blender", NULL, NULL, 1 << 4, 0, 0, 0},
+//     {"firefox", NULL, NULL, 1 << 2, 0, 0, 0},
+//     {"surf", NULL, NULL, 1 << 2, 0, 0, 0},
+//     {TERMCLASS, NULL, NULL, 0, 0, 1, 0},
+//     {NULL, NULL, "Event Tester", 0, 0, 0, 1},
+//     {TERMCLASS, "floatterm", NULL, 0, 1, 1, 0},
+//     {TERMCLASS, "bg", NULL, 1 << 7, 0, 1, 0, -1},
+//     {TERMCLASS, "spterm", NULL, SPTAG(0), 1, 1, 0, -1},
+//     {TERMCLASS, "spcalc", NULL, SPTAG(1), 1, 1, 0, -1},
+// };
 static const Rule rules[] = {
-    /* xprop(1):
-     *	WM_CLASS(STRING) = instance, class
-     *	WM_NAME(STRING) = title
-     */
-    /* class    instance      title       	 tags mask    isfloating
-       isterminal  noswallow  monitor */
-    {"Gimp", NULL, NULL, 1 << 4, 0, 0, 0, -1},
-    {"Blender", NULL, NULL, 1 << 4, 0, 0, 0, -1},
-    {"firefox", NULL, NULL, 1 << 2, 0, 0, 0, -1},
-    {"surf", NULL, NULL, 1 << 2, 0, 0, 0, -1},
-    {TERMCLASS, NULL, NULL, 0, 0, 1, 0, -1},
-    {NULL, NULL, "Event Tester", 0, 0, 0, 1, -1},
-    {TERMCLASS, "floatterm", NULL, 0, 1, 1, 0, -1},
-    {TERMCLASS, "bg", NULL, 1 << 7, 0, 1, 0, -1},
-    {TERMCLASS, "spterm", NULL, SPTAG(0), 1, 1, 0, -1},
-    {TERMCLASS, "spcalc", NULL, SPTAG(1), 1, 1, 0, -1},
+    /* class          instance    title       tags mask     isfloating
+       focusopacity  unfocusopacity  isterminal  noswallow  monitor */
+    {"Gimp", NULL, NULL, 1 << 4, 0, 0, 0, 0.9, 0, -1},
+    {"Blender", NULL, NULL, 1 << 4, 0, 0, 0.9, 0, 0, -1},
+    {"firefox", NULL, NULL, 1 << 2, 0, 0, 0.9, 0, 0, -1},
+    {"surf", NULL, NULL, 1 << 2, 0, 0, 0, 0.9, 0, -1},
+    {"qutebrowser", NULL, NULL, 0, 0, 1, 0, 0.9, 0, -1},
+    {TERMCLASS, NULL, NULL, 0, 0, 1, 0, 1, 0, -1},
+    {NULL, NULL, "Event Tester", 0, 0, 0, 1, 0, 0, -1},
+    {TERMCLASS, "floatterm", NULL, 0, 1, 1, 0, 0, 0, -1},
+    {TERMCLASS, "bg", NULL, 1 << 7, 0, 1, 0, 0, 0, -1},
+    {TERMCLASS, "spterm", NULL, SPTAG(0), 1, 1, 0, 0, 0, -1},
+    {TERMCLASS, "spcalc", NULL, SPTAG(1), 1, 1, 0, 0, 0, -1},
 };
-
 /* window swallowing */
 static const int swaldecay = 3;
 static const int swalretroactive = 1;

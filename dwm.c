@@ -90,8 +90,8 @@ enum {
   NetWMWindowTypeDialog,
   NetClientList,
   NetClientInfo,
-  NetLast,
-  NetWMWindowsOpacity
+  NetWMWindowsOpacity,
+  NetLast
 }; /* EWMH atoms */
 enum {
   WMProtocols,
@@ -141,6 +141,8 @@ struct Client {
   pid_t pid;
   Client *next;
   Client *snext;
+  double opacity;
+  double unfocusopacity;
   Client *swallowing;
   Client *swer; /* swallower of client, NULL by default */
   Monitor *mon;
@@ -192,6 +194,8 @@ typedef struct {
   const char *title;
   unsigned int tags;
   int isfloating;
+  double opacity;
+  double unfocusopacity;
   int isterminal;
   int noswallow;
   int monitor;
@@ -237,6 +241,8 @@ static void arrangemon(Monitor *m);
 static void attach(Client *c);
 static void attachstack(Client *c);
 static void buttonpress(XEvent *e);
+static void changefocusopacity(const Arg *arg);
+static void changeunfocusopacity(const Arg *arg);
 static void checkotherwm(void);
 static void cleanup(void);
 static void cleanupmon(Monitor *mon);
@@ -449,6 +455,8 @@ void applyrules(Client *c) {
       c->isfloating = r->isfloating;
       c->noswallow = r->noswallow;
       c->tags |= r->tags;
+      c->opacity = activeopacity;
+      c->unfocusopacity = inactiveopacity;
       if ((r->tags & SPTAGMASK) && r->isfloating) {
         c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
         c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
@@ -681,6 +689,32 @@ void buttonpress(XEvent *e) {
         CLEANMASK(buttons[i].mask) == CLEANMASK(ev->state))
       buttons[i].func(
           click == ClkTagBar && buttons[i].arg.i == 0 ? &arg : &buttons[i].arg);
+}
+
+void changefocusopacity(const Arg *arg) {
+  if (!selmon->sel)
+    return;
+  selmon->sel->opacity += arg->f;
+  if (selmon->sel->opacity > 1.0)
+    selmon->sel->opacity = 1.0;
+
+  if (selmon->sel->opacity < 0.1)
+    selmon->sel->opacity = 0.1;
+
+  opacity(selmon->sel, selmon->sel->opacity);
+}
+
+void changeunfocusopacity(const Arg *arg) {
+  if (!selmon->sel)
+    return;
+  selmon->sel->unfocusopacity += arg->f;
+  if (selmon->sel->unfocusopacity > 1.0)
+    selmon->sel->unfocusopacity = 1.0;
+
+  if (selmon->sel->unfocusopacity < 0.1)
+    selmon->sel->unfocusopacity = 0.1;
+
+  opacity(selmon->sel, selmon->sel->unfocusopacity);
 }
 
 void checkotherwm(void) {
@@ -1130,7 +1164,7 @@ int fakesignal(void) {
 }
 
 void opacity(Client *c, double opacity) {
-  if (opacity >= 0 && opacity <= 1) {
+  if (opacity > 0 && opacity < 1) {
     unsigned long real_opacity[] = {opacity * 0xffffffff};
     XChangeProperty(dpy, c->win, netatom[NetWMWindowsOpacity], XA_CARDINAL, 32,
                     PropModeReplace, (unsigned char *)real_opacity, 1);
@@ -1162,6 +1196,8 @@ void focus(Client *c) {
     grabbuttons(c, 1);
     XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColBorder].pixel);
     setfocus(c);
+    c->opacity = MIN(1.0, MAX(0, c->opacity));
+    opacity(c, c->opacity);
   } else {
     XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
     XDeleteProperty(dpy, root, netatom[NetActiveWindow]);
@@ -1393,6 +1429,7 @@ void manage(Window w, XWindowAttributes *wa) {
     applyrules(c);
     term = termforwin(c);
   }
+  opacity(c, c->opacity);
 
   if (c->x + WIDTH(c) > c->mon->wx + c->mon->ww)
     c->x = c->mon->wx + c->mon->ww - WIDTH(c);
@@ -2566,6 +2603,8 @@ void unfocus(Client *c, int setfocus) {
   if (!c)
     return;
   grabbuttons(c, 0);
+  c->unfocusopacity = MIN(1.0, MAX(0, c->unfocusopacity));
+  opacity(c, c->unfocusopacity);
   XSetWindowBorder(dpy, c->win, scheme[SchemeNorm][ColBorder].pixel);
   if (setfocus) {
     XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
