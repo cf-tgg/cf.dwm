@@ -21,6 +21,7 @@ static int smartgaps =
     0;                  /* 1 means no outer gap when there is only one window */
 static int showbar = 1; /* 0 means no bar */
 static int topbar = 1;  /* 0 means bottom bar */
+static const double defaultopacity = 0.90;
 static char *fonts[] = {
     // "DejaVu Sans Mono:size=12",
     // "Source Code Pro:size=12",
@@ -204,7 +205,7 @@ static const Key keys[] = {
      SHCMD("/home/cf/.local/bin/kb-toggle")},
     {MODKEY | ControlMask, XK_space, spawn,
      SHCMD("/home/cf/.local/bin/kb-toggle")},
-    {MODKEY | ControlMask, XK_p, spawn, SHCMD("transset-df -p 0.8")},
+    {MODKEY | ControlMask, XK_p, spawn, SHCMD("transset-df -p 0.9")},
     {MODKEY, XK_q, killclient, {0}},
     {MODKEY | ShiftMask, XK_q, spawn, {.v = (const char *[]){"sysact", NULL}}},
     {MODKEY, XK_w, spawn, {.v = (const char *[]){BROWSER, NULL}}},
