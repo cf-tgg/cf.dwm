@@ -90,7 +90,8 @@ enum {
   NetWMWindowTypeDialog,
   NetClientList,
   NetClientInfo,
-  NetLast
+  NetLast,
+  NetWMWindowsOpacity
 }; /* EWMH atoms */
 enum {
   WMProtocols,
@@ -254,6 +255,7 @@ static void drawbars(void);
 static void enternotify(XEvent *e);
 static void expose(XEvent *e);
 static int fakesignal(void);
+static void opacity(Client *c, double opacity);
 static void focus(Client *c);
 static void focusin(XEvent *e);
 static void focusmon(const Arg *arg);
@@ -1127,6 +1129,15 @@ int fakesignal(void) {
   return 1;
 }
 
+void opacity(Client *c, double opacity) {
+  if (opacity >= 0 && opacity <= 1) {
+    unsigned long real_opacity[] = {opacity * 0xffffffff};
+    XChangeProperty(dpy, c->win, netatom[NetWMWindowsOpacity], XA_CARDINAL, 32,
+                    PropModeReplace, (unsigned char *)real_opacity, 1);
+  } else
+    XDeleteProperty(dpy, c->win, netatom[NetWMWindowsOpacity]);
+}
+
 void focus(Client *c) {
   if (!c || !ISVISIBLE(c)) {
     for (c = selmon->stack;
@@ -1373,6 +1384,7 @@ void manage(Window w, XWindowAttributes *wa) {
   c->oldbw = wa->border_width;
 
   updatetitle(c);
+  opacity(c, defaultopacity);
   if (XGetTransientForHint(dpy, w, &trans) && (t = wintoclient(trans))) {
     c->mon = t->mon;
     c->tags = t->tags;
@@ -1995,6 +2007,8 @@ void setup(void) {
       XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_DIALOG", False);
   netatom[NetClientList] = XInternAtom(dpy, "_NET_CLIENT_LIST", False);
   netatom[NetClientInfo] = XInternAtom(dpy, "_NET_CLIENT_INFO", False);
+  netatom[NetWMWindowsOpacity] =
+      XInternAtom(dpy, "_NET_WM_WINDOW_OPACITY", False);
   /* init cursors */
   cursor[CurNormal] = drw_cur_create(drw, XC_left_ptr);
   cursor[CurResize] = drw_cur_create(drw, XC_sizing);
