@@ -25,6 +25,7 @@ I haven't kept `man dwm`/`dwm.1` updated though. PRs welcome on that, lol.
 - [swallow patch](https://dwm.suckless.org/patches/swallow/): if a program run from a terminal would make it inoperable, it temporarily takes its place to save space.
 - [dwm-dynamicswallow-patch](https://dwm.suckless.org/patches/dynamicswallow/): introduces "dynamic" window swallowing to dwm. 
 - [dwm-alpha](https://dwm.suckless.org/patches/alpha/): Allow dwm to have translucent bars, while keeping all the text on it opaque.
+- [pertag](https://dwm.suckless.org/patches/pertag/): More general approach to taglayouts patch. This patch keeps layout, mwfact, barpos and nmaster per tag.
 
 ## Installation for newbs
 
