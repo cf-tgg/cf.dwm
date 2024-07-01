@@ -24,7 +24,7 @@ static int topbar = 1;  /* 0 means bottom bar */
 static char *fonts[] = {
     // "DejaVu Sans Mono:size=12",
     // "Source Code Pro:size=12",
-    "Libertinus Mono:size=11", "monospace:size=10",
+    "Libertinus Mono:size=11", "monospace:size=16",
     "Font Awesome 6:pixelsize=24:antialias=true:autohint=true",
     "NotoColorEmoji:pixelsize=20:antialias=true:autohint=true"};
 static char normbgcolor[] = "#010101";
