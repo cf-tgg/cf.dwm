@@ -33,7 +33,7 @@ static char selbgcolor[] = "#010101";
 static const double defaultopacity = 0.9f;
 static const double activeopacity = 0.9f; /* Window opacity when it's focused (0 <= opacity <= 1) */
 static const double inactiveopacity = 0.8f; /* Window opacity when it's inactive (0 <= opacity <= 1) */
-static const unsigned int baralpha = 0xd0;
+static const unsigned int baralpha = 230;
 static const unsigned int borderalpha = OPAQUE;
 static const char *colors[][3] = {
     /*               fg           bg           border   */
