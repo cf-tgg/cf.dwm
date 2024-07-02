@@ -22,15 +22,15 @@ static int smartgaps =
     0;                  /* 1 means no outer gap when there is only one window */
 static int showbar = 1; /* 0 means no bar */
 static int topbar = 1;  /* 0 means bottom bar */
-static const double defaultopacity = 0.90;
+static const double defaultopacity = 0.90f;
 static const double activeopacity =
-    0.95f; /* Window opacity when it's focused (0 <= opacity <= 1) */
+    0.9f; /* Window opacity when it's focused (0 <= opacity <= 1) */
 static const double inactiveopacity =
     0.8f; /* Window opacity when it's inactive (0 <= opacity <= 1) */
 static char *fonts[] = {
     // "DejaVu Sans Mono:size=12",
     // "Source Code Pro:size=12",
-    "Libertinus Mono:size=11", "monospace:size=16",
+    "Libertinus Mono:size=14", "monospace:size=16",
     "Font Awesome 6:pixelsize=24:antialias=true:autohint=true",
     "NotoColorEmoji:pixelsize=20:antialias=true:autohint=true"};
 static char normbgcolor[] = "#010101";
@@ -57,8 +57,8 @@ typedef struct {
   const void *cmd;
 } Sp;
 const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "100x30", NULL};
-const char *spcmd2[] = {TERMINAL, "-n",   "spcalc", "-f", "monospace:size=40",
-                        "-g",     "12x8", "-e",     "bc", "-lq",
+const char *spcmd2[] = {TERMINAL, "-n",    "spcalc", "-f", "monospace:size=40",
+                        "-g",     "12x10", "-e",     "bc", "-lq",
                         NULL};
 static Sp scratchpads[] = {
     /* name          cmd  */
@@ -67,8 +67,9 @@ static Sp scratchpads[] = {
 };
 
 /* tagging */
-static const char *tags[] = {"", "", "",  "", "",
-                             "", "", " ", ""};
+// static const char *tags[] = {"", "", "",  "", "", "",
+// "", " ", ""};
+static const char *tags[] = {"1", "2", "3", "4", "5", "6", "7", "8 ", "9"};
 
 // static const Rule rules[] = {
 //     /* xprop(1):
@@ -97,8 +98,8 @@ static const Rule rules[] = {
     {"firefox", NULL, NULL, 1 << 2, 0, 0, 0.9f, 0, 0, -1},
     {"surf", NULL, NULL, 1 << 2, 0, 0, 0, 0.9f, 0, -1},
     {"qutebrowser", NULL, NULL, 0, 0, 1, 0, 0.9f, 0, -1},
-    {TERMCLASS, "St", "neomutt", 1 << 8, 0, 1, 0.9, 1, 0, -1},
-    {TERMCLASS, "St", "Zathura", 1 << 5, 0, 0, 0.9, 0.8, 0, -1},
+    {TERMCLASS, "neomutt", NULL, 1 << 6, 0, 1, 0.9f, 0.9f, 1, -1},
+    {TERMCLASS, "Zathura", NULL, 1 << 3, 0, 0.8f, 0.9f, 1, 0, -1},
     {TERMCLASS, NULL, NULL, 0, 0, 1, 0, 1, 0, -1},
     {NULL, NULL, "Event Tester", 0, 0, 0, 1, 0, 0, -1},
     {TERMCLASS, "floatterm", NULL, 0, 1, 1, 0, 0, 0, -1},
