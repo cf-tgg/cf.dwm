@@ -12,30 +12,18 @@ static unsigned int borderpx = 1; /* border pixel of windows */
 static unsigned int snap = 18;    /* snap pixel */
 static unsigned int gappih = 0;   /* horiz inner gap between windows */
 static unsigned int gappiv = 0;   /* vert inner gap between windows */
-static unsigned int gappoh =
-    0; /* horiz outer gap between windows and screen edge */
-static unsigned int gappov =
-    0; /* vert outer gap between windows and screen edge */
-static int swallowfloating =
-    0; /* 1 means swallow floating windows by default */
-static int smartgaps =
-    0;                  /* 1 means no outer gap when there is only one window */
+static unsigned int gappoh = 0; /* horiz outer gap between windows and screen edge */
+static unsigned int gappov = 0; /* vert outer gap between windows and screen edge */
+static int swallowfloating = 0; /* 1 means swallow floating windows by default */
+static int smartgaps = 0;                  /* 1 means no outer gap when there is only one window */
 static int showbar = 1; /* 0 means no bar */
 static int topbar = 1;  /* 0 means bottom bar */
-<<<<<<< HEAD
-static const double defaultopacity = 0.90f;
-static const double activeopacity =
-    0.9f; /* Window opacity when it's focused (0 <= opacity <= 1) */
-static const double inactiveopacity =
-    0.8f; /* Window opacity when it's inactive (0 <= opacity <= 1) */
-=======
->>>>>>> patches
 static char *fonts[] = {
     // "DejaVu Sans Mono:size=12",
     // "Source Code Pro:size=12",
-    "Libertinus Mono:size=14", "monospace:size=16",
-    "Font Awesome 6:pixelsize=24:antialias=true:autohint=true",
-    "NotoColorEmoji:pixelsize=20:antialias=true:autohint=true"};
+    "Libertinus Mono:size=11", "monospace:size=16",
+    "Font Awesome 6:pixelsize=20:antialias=true:autohint=true",
+    "NotoColorEmoji:pixelsize=16:antialias=true:autohint=true"};
 static char normbgcolor[] = "#010101";
 static char normbordercolor[] = "#0d0d0d";
 static char normfgcolor[] = "#99968e";
@@ -43,6 +31,8 @@ static char selfgcolor[] = "#eeeeee";
 static char selbordercolor[] = "#010101";
 static char selbgcolor[] = "#010101";
 static const double defaultopacity = 0.9f;
+static const double activeopacity = 0.9f; /* Window opacity when it's focused (0 <= opacity <= 1) */
+static const double inactiveopacity = 0.8f; /* Window opacity when it's inactive (0 <= opacity <= 1) */
 static const unsigned int baralpha = 0xd0;
 static const unsigned int borderalpha = OPAQUE;
 static const char *colors[][3] = {
@@ -71,9 +61,8 @@ static Sp scratchpads[] = {
 };
 
 /* tagging */
-// static const char *tags[] = {"", "", "",  "", "", "",
-// "", " ", ""};
-static const char *tags[] = {"1", "2", "3", "4", "5", "6", "7", "8 ", "9"};
+static const char *tags[] = {"", "", "",  "", "", "", "", " ", ""};
+// static const char *tags[] = {"1", "2", "3", "4", "5", "6", "7", "8 ", "9"};
 
 // static const Rule rules[] = {
 //     /* xprop(1):
@@ -257,6 +246,11 @@ static const Key keys[] = {
     {MODKEY | ShiftMask, XK_Up, spawn, SHCMD("transset-df -a --inc .1")},
     {MODKEY | ShiftMask, XK_Down, spawn, SHCMD("transset-df -a --dec .1")},
     {MODKEY | ShiftMask, XK_apostrophe, spawn, SHCMD("transset-df -a --dec .1")},
+    { MODKEY| ControlMask,             XK_a,      changefocusopacity,   {.f = +0.025}},
+    { MODKEY| ControlMask,             XK_s,      changefocusopacity,   {.f = -0.025}},
+    { MODKEY| ControlMask,             XK_z,      changeunfocusopacity, {.f = +0.025}},
+    { MODKEY| ControlMask,             XK_x,      changeunfocusopacity, {.f = -0.025}},
+
     {MODKEY, XK_d, spawn, {.v = (const char *[]){"dmenu_run", NULL}}},
     {MODKEY | ShiftMask, XK_d, spawn, {.v = (const char *[]){"passmenu", NULL}}},
     {MODKEY, XK_f, togglefullscr, {0}},
@@ -265,8 +259,8 @@ static const Key keys[] = {
     {MODKEY | ShiftMask, XK_g, shifttag, {.i = -1}},
     {MODKEY, XK_h, setmfact, {.f = -0.05}},
     /* cfacts */
-    {MODKEY | ControlMask, XK_h, setcfact, {.f = +0.25}},
-    {MODKEY | ControlMask, XK_l, setcfact, {.f = -0.25}},
+    {MODKEY | ControlMask, XK_k, setcfact, {.f = +0.25}},
+    {MODKEY | ControlMask, XK_j, setcfact, {.f = -0.25}},
     {MODKEY | ControlMask, XK_o, setcfact, {.f = 0.00}},
 
     /* resize gaps */
@@ -297,7 +291,7 @@ static const Key keys[] = {
     {MODKEY | ControlMask, XK_r, spawn, SHCMD("rssadd $(xclip -o)")},
     {MODKEY, XK_c, spawn, SHCMD(TERMINAL " -e calcurse")},
     {MODKEY | ShiftMask, XK_b, spawn, {.v = (const char *[]){"bookmarkthis", NULL}}},
-    {MODKEY | ShiftMask, XK_n, spawn, {.v = (const char *[]){TERMINAL, "-e", "nvim ./", NULL}}},
+    // {MODKEY | ShiftMask, XK_n, spawn, {.v = (const char *[]){TERMINAL, "-e", "nvim ./", NULL}}},
     {MODKEY, XK_n, spawn, SHCMD(TERMINAL " -e newsboat ; pkill -RTMIN+6 dwmblocks")},
     {MODKEY, XK_m, spawn, {.v = (const char *[]){TERMINAL, "-e", "ncmpcpp", NULL}}},
 

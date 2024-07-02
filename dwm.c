@@ -309,8 +309,7 @@ static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
 static void sigchld(int unused);
 static void swal(Client *swer, Client *swee, int manage);
-static void swalreg(Client *c, const char *class, const char *inst,
-                    const char *title);
+static void swalreg(Client *c, const char *class, const char *inst, const char *title);
 static void swaldecayby(int decayby);
 static void swalmanage(Swallow *s, Window w, XWindowAttributes *wa);
 static Swallow *swalmatch(Window w);
