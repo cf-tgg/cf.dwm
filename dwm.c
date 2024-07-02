@@ -131,6 +131,7 @@ typedef struct Client Client;
 struct Client {
   char name[256];
   float mina, maxa;
+  float cfact;
   int x, y, w, h;
   int oldx, oldy, oldw, oldh;
   int basew, baseh, incw, inch, maxw, maxh, minw, minh, hintsvalid;
@@ -295,6 +296,7 @@ static void setclienttagprop(Client *c);
 static void setfocus(Client *c);
 static void setfullscreen(Client *c, int fullscreen);
 static void setlayout(const Arg *arg);
+static void setcfact(const Arg *arg);
 static void setmfact(const Arg *arg);
 static void setup(void);
 static void seturgent(Client *c, int urg);
@@ -523,6 +525,9 @@ int applysizehints(Client *c, int *x, int *y, int *w, int *h, int interact) {
       *w -= *w % c->incw;
     if (c->inch)
       *h -= *h % c->inch;
+    /* apply cfact adjustment */
+    // *w = *w * c->cfact;
+    // *h = *h * c->cfact;
     /* restore base dimensions */
     *w = MAX(*w + c->basew, c->minw);
     *h = MAX(*h + c->baseh, c->minh);
@@ -1382,6 +1387,7 @@ void manage(Window w, XWindowAttributes *wa) {
   c->w = c->oldw = wa->width;
   c->h = c->oldh = wa->height;
   c->oldbw = wa->border_width;
+  c->cfact = 1.0;
 
   updatetitle(c);
   opacity(c, defaultopacity);
@@ -1504,15 +1510,34 @@ void maprequest(XEvent *e) {
 void monocle(Monitor *m) {
   unsigned int n;
   int oh, ov, ih, iv;
+  float mfacts = 0, sfacts = 0;
   Client *c;
 
   getgaps(m, &oh, &ov, &ih, &iv, &n);
 
   if (n > 0) /* override layout symbol */
     snprintf(m->ltsymbol, sizeof m->ltsymbol, "[%d]", n);
-  for (c = nexttiled(m->clients); c; c = nexttiled(c->next))
-    resize(c, m->wx + ov, m->wy + oh, m->ww - 2 * c->bw - 2 * ov,
-           m->wh - 2 * c->bw - 2 * oh, 0);
+  for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++) {
+    if (n < m->nmaster)
+      mfacts += c->cfact;
+    else
+      sfacts += c->cfact;
+  }
+  /* resive clients based on cfacts values */
+  for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++) {
+    if (n < m->nmaster) {
+      // Master area calculation
+      resize(c, m->wx + ov, m->wy + oh, m->ww - 2 * c->bw - 2 * ov,
+             m->wh - 2 * c->bw - 2 * oh, 0);
+    } else {
+      // Stack area calculation
+      resize(c, m->wx + ov, m->wy + oh, m->ww - 2 * c->bw - 2 * ov,
+             m->wh - 2 * c->bw - 2 * oh, 0);
+    }
+  }
+  // for (c = nexttiled(m->clients); c; c = nexttiled(c->next))
+  // resize(c, m->wx + ov, m->wy + oh, m->ww - 2 * c->bw - 2 * ov,
+  //        m->wh - 2 * c->bw - 2 * oh, 0);
 }
 
 void motionnotify(XEvent *e) {
@@ -1951,6 +1976,23 @@ void setlayout(const Arg *arg) {
     arrange(selmon);
   else
     drawbar(selmon);
+}
+
+void setcfact(const Arg *arg) {
+  float f;
+  Client *c;
+
+  c = selmon->sel;
+
+  if (!arg || !c || !selmon->lt[selmon->sellt]->arrange)
+    return;
+  f = arg->f + c->cfact;
+  if (arg->f == 0.0)
+    f = 1.0;
+  else if (f < 0.25 || f > 4.0)
+    return;
+  c->cfact = f;
+  arrange(selmon);
 }
 
 /* arg > 1.0 will set mfact absolutely */
