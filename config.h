@@ -5,7 +5,7 @@
 #define TERMCLASS "St"
 #define BROWSER "qutebrowser"
 
-/*      appearance      */
+/*      Appearance      */
 static unsigned int borderpx = 1; /* border pixel of windows */
 static unsigned int snap = 18;    /* snap pixel */
 static unsigned int gappih = 0;   /* horiz inner gap between windows */
@@ -20,8 +20,8 @@ static int showbar = 1;           /* 0 means no bar */
 static int topbar = 1;            /* 0 means bottom bar */
 
 static char *fonts[] = {
-    "Cousine Nerd Font Mono:size=12", "monospace:size=16",
-    "Font Awesome 6:pixelsize=20:antialias=true:autohint=true",
+    "Caskadia Cove Nerd Font Mono:size=8", "monospace:size=10",
+    "Font Awesome 6:pixelsize=24:antialias=true:autohint=true",
     "NotoColorEmoji:pixelsize=16:antialias=true:autohint=true"
 };
 
@@ -33,9 +33,9 @@ static char selbordercolor[] = "#010101";
 static char selbgcolor[] = "#010101";
 
 static const double defaultopacity = 0.95;
-static const double activeopacity = 0.95;   /* Window opacity when it's focused (0 <= opacity <= 1) */
-static const double inactiveopacity = 0.88; /* Window opacity when it's inactive (0 <= opacity <= 1) */
-static const unsigned int baralpha = 220;
+static const double activeopacity = 0.96;   /* Window opacity when it's focused (0 <= opacity <= 1) */
+static const double inactiveopacity = 0.95; /* Window opacity when it's inactive (0 <= opacity <= 1) */
+static const unsigned int baralpha = 244;
 static const unsigned int borderalpha = OPAQUE;
 
 static const char *colors[][3] = {
@@ -55,8 +55,8 @@ typedef struct {
   const void *cmd;
 } Sp;
 
-const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "100x30", NULL};
-const char *spcmd2[] = {TERMINAL, "-n",    "spcalc", "-f", "monospace:size=40", "-g", "12x10", "-e", "bc", "-lq", NULL};
+const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "85x25", NULL};
+const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "monospace:size=40", "-g", "12x8", "-e", "bc", "-lq", NULL};
 
 static Sp scratchpads[] = {
     /* name         cmd  */
@@ -86,8 +86,8 @@ static const Rule rules[] = {
 };
 
 /*      window swallowing   */
-static const int swaldecay = 5;
-static const int swalretroactive = 1;
+static const int swaldecay = 30;
+static const int swalretroactive = 15;
 static const char swalsymbol[] = "👅";
 
 /*  layouts  */
@@ -227,8 +227,8 @@ static const Key keys[] = {
 /*  { MODKEY | ControlMask,  XK_w,           spawn,         {.v = (const char *[]){"camcast", NULL}}},    */
     { MODKEY, 		     XK_Up,          spawn,         SHCMD("xdotool type \"$(grep -v '^#' ~/Notes/bmcmd | dmenu -i -l 50 | cut " "-d' ' -f2-)\"")},
     { MODKEY, 		     XK_Down,        spawn,         {.v = (const char *[]){"bmcommand", NULL}}},
-    { MODKEY | ControlMask,  XK_s,           spawn,         {.v = (const char *[]){"scrncast", NULL}}},
-    { MODKEY | ControlMask,  XK_p,           spawn,         {.v = (const char *[]){"dmenurecord", "kill", NULL}}},
+    { MODKEY | ControlMask,  XK_p,           spawn,         {.v = (const char *[]){"scrncast", NULL}}},
+    { MODKEY | ShiftMask |ControlMask, XK_p, spawn,         {.v = (const char *[]){"dmenurecord", "kill", NULL}}},
  /* { MODKEY | ShiftMask,    XK_Up,          spawn,         SHCMD("transset-df -a --inc .1")},   */
  /* { MODKEY | ShiftMask,    XK_Down,        spawn,         SHCMD("transset-df -a --dec .1")},   */
  /* { MODKEY | ShiftMask,    XK_apostrophe,  spawn,         SHCMD("transset-df -a --dec .1")},   */
@@ -300,10 +300,10 @@ static const Key keys[] = {
     { MODKEY | ShiftMask,   XK_bracketright, spawn,  {.v = (const char *[]){"mpc", "seek", "+60", NULL}}},
 
     /* Super + [left|right] to switch monitor focus; Super + Shift + [left|right] to send windows to other monitor */
-    { MODKEY, 		    XK_Left,         focusmon,  {.i = -1}}, 
-    { MODKEY | ShiftMask,    XK_Left,         tagmon,    {.i = -1}},
-    { MODKEY, 		    XK_Right,        focusmon,  {.i = +1}},
-    { MODKEY | ShiftMask,    XK_Right,        tagmon,    {.i = +1}},
+    { MODKEY, 		    XK_Left,         focusmon,   {.i = +1}}, 
+    { MODKEY | ShiftMask,    XK_Left,         tagmon,    {.i = +1}},
+    { MODKEY, 		    XK_Right,        focusmon,   {.i = -1}},
+    { MODKEY | ShiftMask,    XK_Right,        tagmon,    {.i = -1}},
 
     /* Super + Control + [left|right|up|down] to rotate monitor view */
     { MODKEY | ControlMask,  XK_Right,       spawn,          SHCMD("xrandr --output eDP-1 --rotate left && setbg")},
@@ -311,7 +311,11 @@ static const Key keys[] = {
     { MODKEY | ControlMask,  XK_Up,          spawn,          SHCMD("xrandr --output eDP-1 --rotate inverted && setbg")},
     { MODKEY | ControlMask,  XK_Down,        spawn,          SHCMD("xrandr --output eDP-1 --rotate normal && setbg")},
 
-    { MODKEY | ShiftMask,    XK_p,           swalstopsel,    {0}}, // delegate swallowee
+    { MODKEY | ShiftMask,    XK_apostrophe,  swalstopsel,    {0}}, // delegate swallowee
+    {ControlMask,  XK_h,           spawn,           SHCMD("winLeft")},
+    {ControlMask,  XK_j,           spawn,           SHCMD("winUnder")},
+    {ControlMask,  XK_k,           spawn,           SHCMD("winAbove")},
+    {ControlMask,  XK_l,           spawn,           SHCMD("winRight")},
 
     /* Move windows up/down the stack */
     { MODKEY, 		    XK_Page_Up,      shiftview,      {.i = -1}},
@@ -322,7 +326,8 @@ static const Key keys[] = {
     { MODKEY | ShiftMask,   XK_s,       spawn, SHCMD("xdotool type $(grep -v '^#' ~/Notes/snippets | dmenu -i -l 50 | " "cut -d' ' -f1)")},
     { MODKEY | ShiftMask,   XK_Insert,  spawn, SHCMD("xdotool type --delay 50 \"$(grep -v '^#' ~/Notes/bmcmd | dmenu -i " "-l 50 | cut -d' ' -f2-)\"")},
     { MODKEY, 		    XK_F1,      spawn, SHCMD("man -k . | dmenu -l 30 | awk '{print $1}' | xargs -r man -Tpdf | " "zathura -")},
-    { MODKEY, 		    XK_F2,      spawn, {.v = (const char *[]){"tutorialvids", NULL}}},
+    { MODKEY, 		    XK_F2,      spawn, SHCMD("readit -c")},
+    { MODKEY | ShiftMask,   XK_F2,      spawn, {.v = (const char *[]){"tutorialvids", NULL}}},
     { MODKEY, 		    XK_F3,      spawn, {.v = (const char *[]){"displayselect", NULL}}},
     { MODKEY, 		    XK_F4,      spawn, SHCMD(TERMINAL " -e pulsemixer; kill -44 $(pidof dwmblocks)")},
     { MODKEY, 		    XK_F5,      xrdb,  {.v = NULL}},
@@ -331,7 +336,7 @@ static const Key keys[] = {
     { MODKEY, 		    XK_F8,      spawn, {.v = (const char *[]){"mailsync", NULL}}},
     { MODKEY, 		    XK_F9,      spawn, {.v = (const char *[]){"mounter", NULL}}},
     { MODKEY, 		    XK_F10,     spawn, {.v = (const char *[]){"unmounter", NULL}}},
-    { MODKEY, 		    XK_F11,     spawn, SHCMD("mpv --untimed --no-cache --no-osc --no-input-default-bindings " "--profile=low-latency --input-conf=/dev/null --title=webcam $(ls " "/dev/video[0,2,4,6,8] | tail -n 1)")},
+    { MODKEY, 		    XK_F11,     spawn, SHCMD("mpv --untimed --no-cache --no-osc --no-input-default-bindings --profile=low-latency --input-conf=/dev/null --title=webcam $(ls /dev/video** | head -n 1)")},
     { MODKEY, 		    XK_F12,     spawn, SHCMD("remaps")},
     { MODKEY, 		    XK_space,   zoom,  {0}},
 
@@ -372,6 +377,20 @@ static const Key keys[] = {
     { 0, XF86XK_TouchpadOn,        spawn, {.v = (const char *[]){"synclient", "TouchpadOff=0", NULL}}},
     { 0, XF86XK_MonBrightnessUp,   spawn, SHCMD("sudo light -A 10.00")},
     { 0, XF86XK_MonBrightnessDown, spawn, SHCMD("sudo light -U 10.00")},
+
+    { 0, 	XK_F1,             spawn, SHCMD("")},
+    { 0, 	XK_F2,             spawn, SHCMD("")},
+    { 0,        XK_F2,             spawn, SHCMD("")},
+    { 0, 	XK_F3,             spawn, SHCMD("")},
+    { 0, 	XK_F4,             spawn, SHCMD("")},
+    { 0, 	XK_F5,             spawn, SHCMD("walfeh")},
+    { 0, 	XK_F6,             spawn, SHCMD("yank_zathura_page.sh")},
+    { 0, 	XK_F7,             spawn, SHCMD("yankmon 1")},
+    { 0, 	XK_F8,             spawn, SHCMD("readit -c")},
+    { 0, 	XK_F9,             spawn, SHCMD("yankmon 2")},
+    { 0, 	XK_F10,            spawn, SHCMD("unswal 1")},
+    /* { 0, 	XK_F11,            spawn, SHCMD("")}, */
+    /* { 0, 	XK_F12,            spawn, SHCMD("")}, */
 
     /*  unused gap keybinds  */
     /* { MODKEY|Mod4Mask,              XK_h,      incrgaps,       {.i = +1 } }, */
