@@ -153,9 +153,14 @@ struct Client {
 typedef struct {
   unsigned int mod;
   KeySym keysym;
+} Key;
+
+typedef struct {
+  unsigned int n;
+  const Key keys[5];
   void (*func)(const Arg *);
   const Arg arg;
-} Key;
+} Keychord;
 
 typedef struct {
   const char *symbol;
@@ -309,7 +314,8 @@ static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
 static void sigchld(int unused);
 static void swal(Client *swer, Client *swee, int manage);
-static void swalreg(Client *c, const char *class, const char *inst, const char *title);
+static void swalreg(Client *c, const char *class, const char *inst,
+                    const char *title);
 static void swaldecayby(int decayby);
 static void swalmanage(Swallow *s, Window w, XWindowAttributes *wa);
 static Swallow *swalmatch(Window w);
@@ -405,6 +411,7 @@ static Drw *drw;
 static Monitor *mons, *selmon;
 static Swallow *swallows;
 static Window root, wmcheckwin;
+unsigned int currentkey = 0;
 
 static int useargb = 0;
 static Visual *visual;
@@ -1341,7 +1348,8 @@ void grabbuttons(Client *c, int focused) {
 void grabkeys(void) {
   updatenumlockmask();
   {
-    unsigned int i, j, k;
+    /* unsigned int i, j, k; */
+    unsigned int i, c, k;
     unsigned int modifiers[] = {0, LockMask, numlockmask,
                                 numlockmask | LockMask};
     int start, end, skip;
@@ -1353,12 +1361,15 @@ void grabkeys(void) {
     if (!syms)
       return;
     for (k = start; k <= end; k++)
-      for (i = 0; i < LENGTH(keys); i++)
+      for (i = 0; i < LENGTH(keychords); i++)
         /* skip modifier codes, we do that ourselves */
-        if (keys[i].keysym == syms[(k - start) * skip])
-          for (j = 0; j < LENGTH(modifiers); j++)
-            XGrabKey(dpy, k, keys[i].mod | modifiers[j], root, True,
-                     GrabModeAsync, GrabModeAsync);
+        if (keychords[i]->keys[currentkey].keysym == syms[(k - start) * skip])
+          for (c = 0; c < LENGTH(modifiers); c++)
+            XGrabKey(dpy, k, keychords[i]->keys[currentkey].mod | modifiers[c],
+                     root, True, GrabModeAsync, GrabModeAsync);
+    if (currentkey > 0)
+      XGrabKey(dpy, XKeysymToKeycode(dpy, XK_Escape), AnyModifier, root, True,
+               GrabModeAsync, GrabModeAsync);
     XFree(syms);
   }
 }
@@ -1381,17 +1392,52 @@ static int isuniquegeom(XineramaScreenInfo *unique, size_t n,
 #endif /* XINERAMA */
 
 void keypress(XEvent *e) {
-  unsigned int i;
+  /* unsigned int i; */
+  XEvent event = *e;
+  unsigned int ran = 0;
   KeySym keysym;
   XKeyEvent *ev;
 
-  ev = &e->xkey;
-  keysym = XkbKeycodeToKeysym(dpy, (KeyCode)ev->keycode, 0,
-                              0); // Provide all four arguments
-  for (i = 0; i < LENGTH(keys); i++)
-    if (keysym == keys[i].keysym &&
-        CLEANMASK(keys[i].mod) == CLEANMASK(ev->state) && keys[i].func)
-      keys[i].func(&(keys[i].arg));
+  Keychord *arr1[sizeof(keychords) / sizeof(Keychord *)];
+  Keychord *arr2[sizeof(keychords) / sizeof(Keychord *)];
+  memcpy(arr1, keychords, sizeof(keychords));
+  Keychord **rpointer = arr1;
+  Keychord **wpointer = arr2;
+
+  size_t r = sizeof(keychords) / sizeof(Keychord *);
+
+  while (1) {
+    ev = &event.xkey;
+    keysym = XKeycodeToKeysym(dpy, (KeyCode)ev->keycode, 0);
+    size_t w = 0;
+    for (int i = 0; i < r; i++) {
+      if (keysym == (*(rpointer + i))->keys[currentkey].keysym &&
+          CLEANMASK((*(rpointer + i))->keys[currentkey].mod) ==
+              CLEANMASK(ev->state) &&
+          (*(rpointer + i))->func) {
+        if ((*(rpointer + i))->n == currentkey + 1) {
+          (*(rpointer + i))->func(&((*(rpointer + i))->arg));
+          ran = 1;
+        } else {
+          *(wpointer + w) = *(rpointer + i);
+          w++;
+        }
+      }
+    }
+    currentkey++;
+    if (w == 0 || ran == 1)
+      break;
+    grabkeys();
+    while (running && !XNextEvent(dpy, &event) && !ran)
+      if (event.type == KeyPress)
+        break;
+    r = w;
+    Keychord **holder = rpointer;
+    rpointer = wpointer;
+    wpointer = holder;
+  }
+  currentkey = 0;
+  grabkeys();
 }
 
 void killclient(const Arg *arg) {
