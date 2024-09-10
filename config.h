@@ -414,7 +414,7 @@ static Keychord *keychords[] = {
     /*&((Keychord){1, {{ShiftMask, XK_F1}},         spawn, SHCMD("")}),*/
     /*&((Keychord){1, {{ShiftMask, XK_F2}},         spawn, SHCMD("")}),*/
     /*&((Keychord){1, {{ShiftMask, XK_F3}},         spawn, SHCMD("")}),*/
-    /*&((Keychord){1, {{ShiftMask, XK_F4}},         spawn, SHCMD("")}),*/
+    &((Keychord){1, {{ShiftMask, XK_F4}},           spawn, SHCMD("toggleblur")}),
     &((Keychord){1, {{ShiftMask, XK_F5}},           spawn, SHCMD("walfeh")}),
     &((Keychord){1, {{ShiftMask, XK_F6}},           spawn, SHCMD("yank_zathura_page.sh")}),
     &((Keychord){1, {{ShiftMask, XK_F7}},           spawn, SHCMD("yankmon 1")}),
