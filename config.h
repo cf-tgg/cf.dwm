@@ -76,19 +76,21 @@ static const char *tags[]  =   {"", "", "",  "", "", "", ""
 
 static const Rule rules[] = {
     /* class        instance     title          tags mask  isfloating  fopacity unfopacity isterminal  noswallow  monitor */
-    {"Gimp",        NULL,        NULL,           1 << 4,     0,          1,          0,          1,          0,          -1},
+    {"Gimp",        NULL,        NULL,           1 << 4,     0,          1,             0,       1,          0,          -1},
     {"Blender",     NULL,        NULL,           1 << 4,     0,          1,          0.95,       0,          0,          -1},
     {"firefox",     NULL,        NULL,           1 << 2,     0,          1,          0.95,       0,          0,          -1},
+    {"brave",       NULL,        NULL,           1 << 9,     0,          1,          0.95,       0,          0,          -1},
     {"surf",        NULL,        NULL,           1 << 2,     0,          1,          0.95,       0,          0,          -1},
+    {"^OBS*",       NULL,        NULL,           1 << 6,     0,          1,             1,       0,          0,          -1},
     {"qutebrowser", NULL,        NULL,           0,          0,          1,          0.95,       0,          0,          -1},
-    {"zathura",     NULL,        NULL,           0,          0,        0.9,          0.8,        0,          0,          -1},
-    {TERMCLASS,     "neomutt",   NULL,           1 << 6,     0,          1,          0.9,        1,          1,          -1},
-    {TERMCLASS,     NULL,        NULL,           0,          0,          1,          0,          1,          0,          -1},
-    {TERMCLASS,     "bg",        NULL,           1 << 7,     0,          1,          0,          0,          0,          -1},
-    {TERMCLASS,     "floatterm", NULL,           0,          1,          1,          0,          0,          0,          -1},
-    {TERMCLASS,     "spterm",    NULL,           SPTAG(0),   1,          1,          0,          0,          0,          -1},
-    {TERMCLASS,     "spcalc",    NULL,           SPTAG(1),   1,          1,          0,          0,          0,          -1},
-    {NULL,          NULL,        "Event Tester", 0,          0,          0,          1,          0,          0,          -1},
+    {"zathura",     NULL,        NULL,           0,          0,        0.9,           0.8,       0,          0,          -1},
+    {TERMCLASS,     "neomutt",   NULL,           1 << 6,     0,          1,           0.9,       1,          1,          -1},
+    {TERMCLASS,     NULL,        NULL,           0,          0,          1,             0,       1,          0,          -1},
+    {TERMCLASS,     "bg",        NULL,           1 << 7,     0,          1,             0,       0,          0,          -1},
+    {TERMCLASS,     "floatterm", NULL,           0,          1,          1,             0,       0,          0,          -1},
+    {TERMCLASS,     "spterm",    NULL,           SPTAG(0),   1,          1,             0,       0,          0,          -1},
+    {TERMCLASS,     "spcalc",    NULL,           SPTAG(1),   1,          1,             0,       0,          0,          -1},
+    {NULL,           NULL,       "Event Tester", 0,          0,          0,             1,       0,          0,          -1},
 };
 
 /*      window swallowing   */
@@ -304,8 +306,8 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{MODKEY|ShiftMask|ControlMask, XK_s}},    spawn,          SHCMD("cat ~/Notes/clipregisters/s | tts")}),
 
     /* Media controls */
-    &((Keychord){1, {{MODKEY | ShiftMask,   XK_m}},            spawn,          SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)")}),
-    &((Keychord){1, {{MODKEY,               XK_m}},            spawn,          {.v = (const char *[]){ TERMINAL, "-e", "ncmpcpp", NULL}}}),
+    &((Keychord){1, {{MODKEY | ControlMask,   XK_m}},          spawn,          SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)")}),
+    &((Keychord){2, {{MODKEY, XK_m}, {0, XK_m}},               spawn,          {.v = (const char *[]){ TERMINAL, "-e", "ncmpcpp", NULL}}}),
     &((Keychord){1, {{ControlMask,          XK_comma}},        spawn,          {.v = (const char *[]){"mpc", "prev", NULL}}}),
     &((Keychord){1, {{ControlMask | ShiftMask, XK_comma}},     spawn,          {.v = (const char *[]){"mpc", "seek", "0%", NULL}}}),
     &((Keychord){1, {{ControlMask,          XK_period}},       spawn,          {.v = (const char *[]){"mpc", "next", NULL}}}),
@@ -322,12 +324,18 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{MODKEY | ShiftMask,   XK_Left}},         tagmon,     {.i = +1}}),
     &((Keychord){1, {{MODKEY | ShiftMask,   XK_Right}},        tagmon,     {.i = -1}}),
     
-    /* Super directional plus additional accessible keys */
+    /* Super + < | >  directional monitor shift keys  */
     &((Keychord){1, {{MODKEY,               XK_period}},       focusmon,   {.i = -1}}),
     &((Keychord){1, {{MODKEY,               XK_comma}},        focusmon,   {.i = +1}}),
     &((Keychord){1, {{MODKEY | ShiftMask,   XK_period}},       tagmon,     {.i = -1}}),
     &((Keychord){1, {{MODKEY | ShiftMask,   XK_comma}},        tagmon,     {.i = +1}}),
     
+    /* Alt + [ u | i ] monitor shift options  */
+    &((Keychord){1, {{Mod1Mask,             XK_i}},            focusmon,   {.i = -1}}),
+    &((Keychord){1, {{Mod1Mask,             XK_u}},            focusmon,   {.i = +1}}),
+    &((Keychord){1, {{Mod1Mask | ShiftMask, XK_i}},            tagmon,     {.i = -1}}),
+    &((Keychord){1, {{Mod1Mask | ShiftMask, XK_u}},            tagmon,     {.i = +1}}),
+
     /* Moving windows in the stack */
     &((Keychord){1, {{MODKEY,               XK_Page_Up}},      shiftview,  {.i = -1}}),
     &((Keychord){1, {{MODKEY | ShiftMask,   XK_Page_Up}},      shifttag,   {.i = -1}}),
@@ -341,11 +349,11 @@ static Keychord *keychords[] = {
     /* &((Keychord){1, {{ MODKEY | ControlMask,  XK_Down}},        spawn,          SHCMD("xrandr --output eDP-1 --rotate normal && setbg")}}), */
 
     /* Délégation de l'avaleur à l'avalé des avalés */
-    &((Keychord){1, {{MODKEY | ShiftMask, XK_apostrophe}},    swalstopsel,     {0}}),
-    /* &((Keychord){1, {{0,                     XK_Left}},        swalstopsel,  {0}}), */
-    /* &((Keychord){1, {{0,                     XK_Right}},       swalstopsel,  {0}}), */
-    /* &((Keychord){1, {{0,                     XK_Up}},          spawn,        SHCMD("unswal 1")}), */
-    &((Keychord){2, {{MODKEY,XK_Down}, {0,XK_Down}},           spawn,           SHCMD("unswal 1")}),
+    &((Keychord){1, {{MODKEY | ShiftMask, XK_apostrophe}},     swalstopsel,     {0}}),
+    &((Keychord){2, {{MODKEY, XK_Left},  {0, XK_Left}},        swalstopsel,     {0}}),
+    &((Keychord){2, {{MODKEY, XK_Right}, {0, XK_Right}},       swalstopsel,     {0}}),
+    &((Keychord){2, {{MODKEY, XK_Up},    {0, XK_Up}},          spawn,           SHCMD("unswal 1")}),
+    &((Keychord){2, {{MODKEY,XK_Down},   {0,XK_Down}},         spawn,           SHCMD("unswal 1")}),
 
 
     /* Alt + [h|j|k|l] dynamic directional swallows */
@@ -435,7 +443,7 @@ static Keychord *keychords[] = {
     &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_l}},         spawn, SHCMD("yankmon 2")}),
     &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_j}},         spawn, SHCMD("yank_zathura_page.sh")}),
     &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_b}},         spawn, SHCMD("toggleblur")}),
-    /*&((Keychord){1, {{0, XK_F12}},                      spawn, SHCMD("")}), */
+    &((Keychord){1, {{ShiftMask, XK_F12}},                spawn, SHCMD("remaps")}),
 
     /*&((Keychord){2, {{MODKEY, XK_}, {MODKEY, XK_m}}, spawn, SHCMD("xmouse")}),*/
 
