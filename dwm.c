@@ -79,36 +79,11 @@
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurSwal, CurLast }; /* cursor */
 enum { SchemeNorm, SchemeSel };                           /* color schemes */
-enum {
-  NetSupported,
-  NetWMName,
-  NetWMState,
-  NetWMCheck,
-  NetWMFullscreen,
-  NetActiveWindow,
-  NetWMWindowType,
-  NetWMWindowTypeDialog,
-  NetClientList,
-  NetClientInfo,
-  NetWMWindowsOpacity,
-  NetLast
-}; /* EWMH atoms */
-enum {
-  WMProtocols,
-  WMDelete,
-  WMState,
-  WMTakeFocus,
-  WMLast
-}; /* default atoms */
-enum {
-  ClkTagBar,
-  ClkLtSymbol,
-  ClkStatusText,
-  ClkWinTitle,
-  ClkClientWin,
-  ClkRootWin,
-  ClkLast
-}; /* clicks */
+enum { NetSupported, NetWMName, NetWMState, NetWMCheck, NetWMFullscreen,
+       NetActiveWindow, NetWMWindowType, NetWMWindowTypeDialog, NetClientList,
+       NetClientInfo, NetWMWindowsOpacity, NetLast }; /* EWMH atoms */
+enum { WMProtocols, WMDelete, WMState, WMTakeFocus, WMLast }; /* default atoms */
+enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, ClkRootWin, ClkLast }; /* clicks */
 enum { ClientRegular = 1, ClientSwallowee, ClientSwallower }; /* client types */
 
 typedef union {
@@ -137,8 +112,7 @@ struct Client {
   int basew, baseh, incw, inch, maxw, maxh, minw, minh, hintsvalid;
   int bw, oldbw;
   unsigned int tags;
-  int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen,
-      isterminal, noswallow, issticky;
+  int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen, isterminal, noswallow, issticky;
   pid_t pid;
   Client *next;
   Client *snext;
@@ -152,7 +126,7 @@ struct Client {
 
 typedef struct {
   unsigned int mod;
-  KeySym keysym;
+  KeySym keysym; /* Keysyms */
 } Key;
 
 typedef struct {
@@ -160,14 +134,14 @@ typedef struct {
   const Key keys[5];
   void (*func)(const Arg *);
   const Arg arg;
-} Keychord;
+} Keychord;   /* Keychords */
 
 typedef struct {
   const char *symbol;
   void (*arrange)(Monitor *);
 } Layout;
 
-typedef struct Pertag Pertag;
+typedef struct Pertag Pertag;  /* Layouts per tag */
 struct Monitor {
   char ltsymbol[16];
   float mfact;
@@ -207,7 +181,7 @@ typedef struct {
   int monitor;
 } Rule;
 
-typedef struct Swallow Swallow;
+typedef struct Swallow Swallow; /* Dynamic Swallow */
 struct Swallow {
   /* Window class name, instance name (WM_CLAS) and title
    * (WM_NAME/_NET_WM_NAME, latter preferred if it exists). An empty string
@@ -240,8 +214,7 @@ typedef struct {
 
 /* function declarations */
 static void applyrules(Client *c);
-static int applysizehints(Client *c, int *x, int *y, int *w, int *h,
-                          int interact);
+static int applysizehints(Client *c, int *x, int *y, int *w, int *h, int interact);
 static void arrange(Monitor *m);
 static void arrangemon(Monitor *m);
 static void attach(Client *c);
@@ -307,15 +280,14 @@ static void setclienttagprop(Client *c);
 static void setfocus(Client *c);
 static void setfullscreen(Client *c, int fullscreen);
 static void setlayout(const Arg *arg);
-static void setcfact(const Arg *arg);
-static void setmfact(const Arg *arg);
+static void setcfact(const Arg *arg);  /* cfacts */
+static void setmfact(const Arg *arg);  /* mfacts */
 static void setup(void);
 static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
 static void sigchld(int unused);
-static void swal(Client *swer, Client *swee, int manage);
-static void swalreg(Client *c, const char *class, const char *inst,
-                    const char *title);
+static void swal(Client *swer, Client *swee, int manage); /* swal had a lot of adds */
+static void swalreg(Client *c, const char *class, const char *inst, const char *title);
 static void swaldecayby(int decayby);
 static void swalmanage(Swallow *s, Window w, XWindowAttributes *wa);
 static Swallow *swalmatch(Window w);
@@ -365,8 +337,7 @@ static void xinitvisual();
 static void zoom(const Arg *arg);
 static void xrdb(const Arg *arg);
 static void load_xresources(void);
-static void resource_load(XrmDatabase db, char *name, enum resource_type rtype,
-                          void *dst);
+static void resource_load(XrmDatabase db, char *name, enum resource_type rtype, void *dst);
 
 static pid_t getparentprocess(pid_t p);
 static int isdescprocess(pid_t p, pid_t c);
@@ -384,6 +355,8 @@ static int screen;
 static int sw, sh; /* X display screen geometry width, height */
 static int bh;     /* bar height */
 static int lrpad;  /* sum of left and right padding for text */
+static int vp;     /* vertical padding for bar */
+static int sp;     /* side padding for bar */
 static int (*xerrorxlib)(Display *, XErrorEvent *);
 static unsigned int numlockmask = 0;
 static void (*handler[LASTEvent])(XEvent *) = {
@@ -831,7 +804,8 @@ void configurenotify(XEvent *e) {
         for (c = m->clients; c; c = c->next)
           if (c->isfullscreen)
             resizeclient(c, m->mx, m->my, m->mw, m->mh);
-        XMoveResizeWindow(dpy, m->barwin, m->wx, m->by, m->ww, bh);
+        XMoveResizeWindow(dpy, m->barwin, m->wx + sp, m->by + vp,
+                          m->ww - 2 * sp, bh);
       }
       focus(NULL);
       arrange(NULL);
@@ -1059,12 +1033,12 @@ void drawbar(Monitor *m) {
   if ((w = m->ww - tw - x) > bh) {
     if (m->sel) {
       drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeNorm]);
-      drw_text(drw, x, 0, w, bh, lrpad / 2, m->sel->name, 0);
+      drw_text(drw, x, 0, w - 2 * sp, bh, lrpad / 2, m->sel->name, 0);
       if (m->sel->isfloating)
         drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0);
     } else {
       drw_setscheme(drw, scheme[SchemeNorm]);
-      drw_rect(drw, x, 0, w, bh, 1, 1);
+      drw_rect(drw, x, 0, w - 2 * sp, bh, 1, 1);
     }
   }
   drw_map(drw, m->barwin, 0, 0, m->ww, bh);
@@ -1502,10 +1476,8 @@ void manage(Window w, XWindowAttributes *wa) {
     unsigned long *data, n, extra;
     Monitor *m;
     Atom atom;
-    if (XGetWindowProperty(dpy, c->win, netatom[NetClientInfo], 0L, 2L, False,
-                           XA_CARDINAL, &atom, &format, &n, &extra,
-                           (unsigned char **)&data) == Success &&
-        n == 2) {
+    if (XGetWindowProperty(dpy, c->win, netatom[NetClientInfo], 0L, 2L, False, XA_CARDINAL,
+            &atom, &format, &n, &extra, (unsigned char **)&data) == Success && n == 2) {
       c->tags = *data;
       for (m = mons; m; m = m->next) {
         if (m->num == *(data + 1)) {
@@ -2111,8 +2083,11 @@ void setup(void) {
   if (!drw_fontset_create(drw, fonts, LENGTH(fonts)))
     die("no fonts could be loaded.");
   lrpad = drw->fonts->h;
-  bh = drw->fonts->h + 2;
+  bh = user_bh ? user_bh : drw->fonts->h + 2;
+  sp = sidepad;
+  vp = (topbar == 1) ? vertpad : -vertpad;
   updategeom();
+
   /* init atoms */
   utf8string = XInternAtom(dpy, "UTF8_STRING", False);
   wmatom[WMProtocols] = XInternAtom(dpy, "WM_PROTOCOLS", False);
@@ -2526,7 +2501,7 @@ void swalstop(Client *swee, Client *root) {
   swer->isfloating = swee->isfloating;
 
   /* Configure geometry params obtained from patches (e.g. cfacts) here. */
-  // swer->cfact = 1.0;
+  swer->cfact = 1.0;
 
   /* If swer is not in tiling mode reuse swee's geometry. */
   if (swer->isfloating || !root->mon->lt[root->mon->sellt]->arrange) {
@@ -2545,9 +2520,7 @@ void swalstop(Client *swee, Client *root) {
   arrange(swer->mon);
 }
 
-/*
- * Stop active swallow for currently selected client.
- */
+/* Stop active swallow for currently selected client. */
 void swalstopsel(const Arg *unused) {
   if (selmon->sel)
     swalstop(selmon->sel, NULL);
@@ -2580,8 +2553,8 @@ void togglebar(const Arg *arg) {
   selmon->showbar = selmon->pertag->showbars[selmon->pertag->curtag] =
       !selmon->showbar;
   updatebarpos(selmon);
-  XMoveResizeWindow(dpy, selmon->barwin, selmon->wx, selmon->by, selmon->ww,
-                    bh);
+  XMoveResizeWindow(dpy, selmon->barwin, selmon->wx + sp, selmon->by + vp,
+                    selmon->ww - 2 * sp, bh);
   arrange(selmon);
 }
 
@@ -2639,6 +2612,7 @@ void toggletag(const Arg *arg) {
 
   if (!selmon->sel)
     return;
+
   newtags = selmon->sel->tags ^ (arg->ui & TAGMASK);
   if (newtags) {
     selmon->sel->tags = newtags;
@@ -2780,8 +2754,8 @@ void updatebars(void) {
   for (m = mons; m; m = m->next) {
     if (m->barwin)
       continue;
-    m->barwin = XCreateWindow(dpy, root, m->wx, m->by, m->ww, bh, 0, depth,
-                              InputOutput, visual,
+    m->barwin = XCreateWindow(dpy, root, m->wx + sp, m->by + vp, m->ww - 2 * sp,
+                              bh, 0, depth, InputOutput, visual,
                               CWOverrideRedirect | CWBackPixel | CWBorderPixel |
                                   CWColormap | CWEventMask,
                               &wa);
@@ -2795,11 +2769,11 @@ void updatebarpos(Monitor *m) {
   m->wy = m->my;
   m->wh = m->mh;
   if (m->showbar) {
-    m->wh -= bh;
-    m->by = m->topbar ? m->wy : m->wy + m->wh;
-    m->wy = m->topbar ? m->wy + bh : m->wy;
+    m->wh = m->wh - vertpad - bh;
+    m->by = m->topbar ? m->wy : m->wy + m->wh + vertpad;
+    m->wy = m->topbar ? m->wy + bh + vp : m->wy;
   } else
-    m->by = -bh;
+    m->by = -bh - vp;
 }
 
 void updateclientlist() {

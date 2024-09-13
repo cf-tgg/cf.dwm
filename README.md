@@ -23,10 +23,13 @@ I haven't kept `man dwm`/`dwm.1` updated though. PRs welcome on that, lol.
 - [shiftview](https://dwm.suckless.org/patches/nextprev/): Cycle through tags (<kbd>super+g/;</kbd>).
 - [vanitygaps](https://dwm.suckless.org/patches/vanitygaps/): Gaps allowed across all layouts.
 - [swallow patch](https://dwm.suckless.org/patches/swallow/): if a program run from a terminal would make it inoperable, it temporarily takes its place to save space.
-- [dwm-dynamicswallow-patch](https://dwm.suckless.org/patches/dynamicswallow/): introduces "dynamic" window swallowing to dwm. 
+- [dwm-dynamicswallow-patch](https://dwm.suckless.org/patches/dynamicswallow/): introduces "dynamic" window swallowing to dwm.
 - [dwm-alpha](https://dwm.suckless.org/patches/alpha/): Allow dwm to have translucent bars, while keeping all the text on it opaque.
 - [pertag](https://dwm.suckless.org/patches/pertag/): More general approach to taglayouts patch. This patch keeps layout, mwfact, barpos and nmaster per tag.
 - [defaulttransparency](https://dwm.suckless.org/patches/defaulttransparency/): This patch adds a default transparency parameter to config.h.
+- [cfacts](https://dwm.suckless.org/patches/cfacts/): Window resizing bindings in all directions by increasing/decreasing cfact values, per tag.
+- [keychord](https://dwm.suckless.org/patches/keychord/dwm-keychord-6.4.diff): Unlocks 2500+ key combos, using only the MODKEY, should be enough for now (until the Keychain patch).
+- [barpadding](https://dwm.suckless.org/patches/barpadding/dwm-barpadding-20211020-a786211.diff): Round corners look awkful without it.
 
 ## Installation for newbs
 
