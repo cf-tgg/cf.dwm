@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
+# Xephyr -br -ac -reset -screen 1680x1050 :1 &
 
-Xephyr -br -ac -reset -screen 1680x1050 :1 &
-sleep 1s
 export DISPLAY=:1
-./dwm &
+sleep 1s
+Xephyr -br -ac -reset -screen 2256x1504 :1 &
 ~/.fehbg &
-
+exec dwm
