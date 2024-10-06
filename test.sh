@@ -4,5 +4,5 @@
 export DISPLAY=:1
 sleep 1s
 Xephyr -br -ac -reset -screen 2256x1504 :1 &
-~/.fehbg &
+setbg &
 exec dwm
