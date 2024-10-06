@@ -445,8 +445,8 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{0, XF86XK_MonBrightnessUp}},            spawn, SHCMD("bright 2")}),
     &((Keychord){1, {{0, XF86XK_MonBrightnessDown}},          spawn, SHCMD("bright -2")}),
 
-    /* &((Keychord){1, {{ShiftMask, XK_F1}},                 spawn, SHCMD("")}), */
-    &((Keychord){1, {{ShiftMask, XK_F2}},                 spawn, SHCMD("pkill readit")}),
+    &((Keychord){1, {{ShiftMask, XK_F1}},                 spawn, SHCMD("wmreup")}),
+    &((Keychord){1, {{ShiftMask, XK_F2}},                 spawn, SHCMD("pkill piper-tts")}),
     &((Keychord){1, {{ShiftMask, XK_F3}},                 spawn, {.v = (const char *[]){"readit", "-c", NULL}}}),
     &((Keychord){1, {{ShiftMask, XK_F4}},                 spawn, {.v = (const char *[]){"toggleblur", NULL}}}),
     &((Keychord){1, {{ShiftMask, XK_F5}},                 spawn, {.v = (const char *[]){"walfeh", NULL}}}),
