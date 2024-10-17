@@ -2550,12 +2550,22 @@ void tagmon(const Arg *arg) {
 }
 
 void togglebar(const Arg *arg) {
-  selmon->showbar = selmon->pertag->showbars[selmon->pertag->curtag] =
-      !selmon->showbar;
-  updatebarpos(selmon);
-  XMoveResizeWindow(dpy, selmon->barwin, selmon->wx + sp, selmon->by + vp,
-                    selmon->ww - 2 * sp, bh);
-  arrange(selmon);
+    selmon->showbar = selmon->pertag->showbars[selmon->pertag->curtag] =
+        !selmon->showbar;
+
+    // Check all clients for fullscreen state
+    Client *c;
+    for (c = selmon->clients; c; c = c->next) {
+        if (c->isfullscreen) {
+            selmon->showbar = False; // Set showbar to False if any fullscreen window exists
+            break; // Exit loop early since we found a fullscreen window
+        }
+    }
+
+    updatebarpos(selmon);
+    XMoveResizeWindow(dpy, selmon->barwin, selmon->wx + sp, selmon->by + vp,
+                      selmon->ww - 2 * sp, bh);
+    arrange(selmon);
 }
 
 void togglefloating(const Arg *arg) {
@@ -3320,3 +3330,4 @@ int main(int argc, char *argv[]) {
   XCloseDisplay(dpy);
   return EXIT_SUCCESS;
 }
+
