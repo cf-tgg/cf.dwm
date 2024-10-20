@@ -1,4 +1,10 @@
-
+/* [ dwm/config.h ][ last update: 2024-10-20 16:23 ]
+ *         __       _
+ *    ___ / _|   __| |_      ___ __ ___
+ *   / __| |_   / _` \ \ /\ / / '_ ` _ \
+ *  | (__|  _| | (_| |\ V  V /| | | | | |
+ *   \___|_|    \__,_| \_/\_/ |_| |_| |_|
+ */
 #include <X11/X.h>
 #include <stddef.h>
 
@@ -441,7 +447,7 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{0, XF86XK_MonBrightnessUp}},            spawn, SHCMD("bright 12")}),
     &((Keychord){1, {{0, XF86XK_MonBrightnessDown}},          spawn, SHCMD("bright -12")}),
 
-    /*                 Shift + [F1-F12]                          for custom scripts and utilities */
+    /*                 Shift + [F1-F12]                          for handy scripts and utilities */
     &((Keychord){1, {{ShiftMask, XK_F1}},                 spawn, {.v = (const char *[]){"linkhandler", NULL}}}),
     &((Keychord){1, {{ShiftMask, XK_F2}},                 spawn, {.v = (const char *[]){"pkill", "piper-tts", NULL}}}),
     &((Keychord){1, {{ShiftMask, XK_F3}},                 spawn, {.v = (const char *[]){"readit", "-c", NULL}}}),
@@ -451,7 +457,7 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{ShiftMask, XK_F7}},                 spawn, {.v = (const char *[]){"yankmon", "1", NULL}}}),
     &((Keychord){1, {{ShiftMask, XK_F8}},                 spawn, {.v = (const char *[]){"readit", "-c", NULL}}}),
     &((Keychord){1, {{ShiftMask, XK_F9}},                 spawn, {.v = (const char *[]){"sd", NULL}}}),
-    &((Keychord){1, {{ShiftMask, XK_F10}},                spawn, {.v = (const char *[]){"{ killall dunst ; setsid -f dunst ; } >/dev/null 2>&1", NULL}}}),
+    &((Keychord){1, {{ShiftMask, XK_F10}},                spawn, {.v = (const char *[]){"redunst", NULL}}}),
     &((Keychord){1, {{ShiftMask, XK_F11}},                spawn, {.v = (const char *[]){"xmouse", NULL}}}),
     &((Keychord){1, {{ShiftMask, XK_F12}},                spawn, {.v = (const char *[]){"remaps", NULL}}}),
 
