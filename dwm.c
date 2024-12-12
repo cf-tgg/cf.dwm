@@ -760,9 +760,8 @@ void clientmessage(XEvent *e) {
   if (cme->message_type == netatom[NetWMState]) {
     if (cme->data.l[1] == netatom[NetWMFullscreen] ||
         cme->data.l[2] == netatom[NetWMFullscreen])
-      setfullscreen(c, (cme->data.l[0] == 1 /* _NET_WM_STATE_ADD    */
-                        || (cme->data.l[0] == 2 /* _NET_WM_STATE_TOGGLE */ &&
-                            !c->isfullscreen)));
+      setfullscreen(c, (cme->data.l[0] == 1 ||
+                       (cme->data.l[0] == 2 && !c->isfullscreen)));
   } else if (cme->message_type == netatom[NetActiveWindow]) {
     if (c != selmon->sel && !c->isurgent)
       seturgent(c, 1);

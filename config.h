@@ -12,6 +12,7 @@
 #define TERMCLASS "St"
 #define BROWSER "qutebrowser"
 
+
 /*     Appearance      */
 static unsigned int borderpx =  1;   /* border pixel of windows */
 static unsigned int snap     = 18;   /* snap pixel */
@@ -28,11 +29,11 @@ static int topbar  = 1;       /* 0 means bottom bar */
 
 static const int vertpad =  2; /* vertical padding of bar */
 static const int sidepad =  3; /* horizontal padding of bar */
-static const int user_bh = 47; /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
+static const int user_bh = 48; /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
 
 static char *fonts[] = {
     "Caskadia Cove Nerd Font Mono:size=8", "monospace:size=10",
-    "Font Awesome 6:pixelsize=24:antialias=true:autohint=true",
+    "Font Awesome 6:pixelsize=64:antialias=true:autohint=true",
     "NotoColorEmoji:pixelsize=16:antialias=true:autohint=true"
 };
 
@@ -49,7 +50,7 @@ static const double activeopacity = 0.98;   /* Window opacity when it's focused 
 static const double inactiveopacity = 0.96; /* Window opacity when it's inactive (0 <= opacity <= 1) */
 
 static const unsigned int borderalpha = OPAQUE;
-static const unsigned int baralpha = 210;
+static const unsigned int baralpha = 216;
 
 static const char *colors[][3] = {
                        /* fg            bg              border   */
@@ -68,15 +69,20 @@ typedef struct {
   const void *cmd;
 } Sp;
 
-const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "85x25", NULL};
-const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "monospace:size=50", "-g", "30x5", "-e", "bc", "-lq", NULL};
-const char *spcmd3[] = {TERMINAL, "-n", "spvclp", "-f", "monospace:size=40", "-g", "85x25", "-e", "vimclip",  NULL};
+
+const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "100x30", NULL};
+const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "monospace:size=50", "-g", "30x5", "-e", "bc",  "-lq", NULL};
+const char *spcmd3[] = {TERMINAL, "-n", "spvclp", "-f", "monospace:size=40", "-g", "100x30", "-e",  "vimclip",  NULL};
+const char *spcmd4[] = {TERMINAL, "-n", "spmpvq", "-f", "monospace:size=40", "-g", "100x30", "-e",  "mpvqls",   NULL};
+const char *spcmd5[] = {TERMINAL, "-n", "spmpvf", "-f", "monospace:size=40", "-g", "100x20", "-e",  "mpvqfzf",   NULL};
 
 static Sp scratchpads[] = {
     /* name         cmd  */
     {"spterm",      spcmd1},
     {"spcalc",      spcmd2},
     {"spvclp",      spcmd3},
+    {"spmpvq",      spcmd4},
+    {"spmpvf",      spcmd5},
 };
 
 /* static const char *tags[] = {"1", "2", "3", "4",  "5", "6", "7", "8 ", "9"}; */
@@ -100,6 +106,8 @@ static const Rule rules[] = {
     {TERMCLASS,       "spterm",    NULL,           SPTAG(0),   1,          1,             0,       0,          0,          -1},
     {TERMCLASS,       "spcalc",    NULL,           SPTAG(1),   1,          1,             0,       0,          0,          -1},
     {TERMCLASS,       "spvclip",   NULL,           SPTAG(2),   1,          1,             0,       1,          1,          -1},
+    {TERMCLASS,       "spmpvq",    NULL,           SPTAG(3),   1,          1,             0,       1,          1,          -1},
+    {TERMCLASS,       "spmpvf",    NULL,           SPTAG(4),   1,          1,             0,       1,          1,          -1},
     {NULL,            NULL,        "Event Tester", 0,          0,          0,             1,       0,          0,          -1},
 };
 
@@ -201,15 +209,16 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{MODKEY,                           XK_0}},           view,          {.ui = ~0}}),
     &((Keychord){1, {{MODKEY | ShiftMask,               XK_0}},           tag,           {.ui = ~0}}),
 
-    &((Keychord){1, {{MODKEY|ShiftMask,                 XK_grave}},       togglescratch, {.ui = 0}}),
-    &((Keychord){1, {{Mod1Mask,                      XK_backslash}},       togglescratch,   {.ui = 0}}),
-    &((Keychord){1, {{MODKEY|ShiftMask|ControlMask,     XK_q}},           quit,                {0}}),
-    &((Keychord){1, {{MODKEY,                           XK_Tab}},         view,                {0}}),
-    &((Keychord){1, {{MODKEY,                           XK_q}},           killclient,          {0}}),
+    &((Keychord){1, {{MODKEY,                           XK_grave}},       togglescratch, {.ui = 0}}),
+    &((Keychord){1, {{Mod1Mask,                     XK_backslash}},       togglescratch, {.ui = 0}}),
+    &((Keychord){1, {{MODKEY|ShiftMask|ControlMask,         XK_q}},       quit,                {0}}),
+    &((Keychord){1, {{MODKEY,                             XK_Tab}},       view,                {0}}),
+    &((Keychord){1, {{Mod1Mask,                           XK_Tab}},       view,                {0}}),
+    &((Keychord){1, {{MODKEY,                               XK_q}},       killclient,          {0}}),
 
-    &((Keychord){1, {{MODKEY|ShiftMask,                 XK_Escape}},      spawn,         {.v = termcmd}}),
+    &((Keychord){0, {{MODKEY|ShiftMask,                 XK_Escape}},      spawn,         {.v = termcmd}}),
     &((Keychord){1, {{MODKEY|ShiftMask,                 XK_q}},           spawn,         {.v = (const char *[]){"wmreup", NULL}}}),
-    &((Keychord){1, {{MODKEY,                           XK_grave}},       spawn,         {.v = (const char *[]){"dmenuunicode", NULL}}}),
+    &((Keychord){1, {{MODKEY|ShiftMask,                 XK_grave}},       spawn,         {.v = (const char *[]){"dmenuunicode", NULL}}}),
     &((Keychord){1, {{MODKEY,                           XK_BackSpace}},   spawn,         {.v = (const char *[]){"sysact",    NULL}}}),
     &((Keychord){1, {{MODKEY | ShiftMask,               XK_BackSpace}},   spawn,         {.v = (const char *[]){"sysact",    NULL}}}),
     &((Keychord){1, {{MODKEY | ControlMask,             XK_Tab}},         spawn,         {.v = (const char *[]){"kb-toggle", NULL}}}),
@@ -275,6 +284,7 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{MODKEY | ShiftMask,   XK_Return}},       togglescratch,  {.ui = 0}}),
     &((Keychord){1, {{MODKEY,               XK_apostrophe}},   togglescratch,  {.ui = 1}}),
     &((Keychord){1, {{Mod1Mask | ShiftMask, XK_Return}},       togglescratch,  {.ui = 2}}),
+    &((Keychord){1, {{Mod1Mask | ShiftMask, XK_t}},            spawn,          {.v = (const  char *[]){"screenconf", NULL}}}),
 
     /* mfacts resizing */
     &((Keychord){1, {{MODKEY, XK_h}},                          setmfact,       {.f = -0.05}}),
@@ -304,19 +314,22 @@ static Keychord *keychords[] = {
 
     /* Web browsers:    <Super+w>  +  <KEY>                    launches       browser functions  */
     &((Keychord){2, {{MODKEY, XK_w}, {0, XK_w}},               spawn,         {.v = (const char *[]){BROWSER, NULL}}}),
-    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_s}},               spawn,         {.v = (const  char *[]){"dsurfraw", NULL}}}),
-    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_y}},               spawn,         {.v = (const  char *[]){"dsurfraw", "youtube", NULL}}}),
-    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_a}},               spawn,         SHCMD("dsurfraw archwiki")}),
-    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_d}},               spawn,         SHCMD("dsurfraw duckduckgo")}),
-    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_i}},               spawn,         SHCMD("dsurfraw imdb")}),
-    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_g}},               spawn,         SHCMD("dsurfraw google chromium")}),
-    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_t}},               spawn,         SHCMD("dsurfraw duckduckgo torbrowser-launcher")}),
-    &((Keychord){2, {{MODKEY, XK_w}, {ShiftMask, XK_g}},       spawn,         SHCMD("dsurfraw google firefox")}),
-    &((Keychord){2, {{MODKEY, XK_w}, {Mod1Mask, XK_g}},        spawn,         SHCMD("dsurfraw google luakit")}),
-    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_l}},               spawn,         SHCMD("dsurfraw archwiki luakit")}),
-    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_h}},               spawn,         SHCMD("dsurfraw wikipedia luakit")}),
-    &((Keychord){2, {{MODKEY, XK_w}, {ShiftMask, XK_d}},       spawn,         SHCMD("dsurfraw duckduckgo librewolf")}),
-    &((Keychord){2, {{MODKEY, XK_w}, {Mod1Mask, XK_d}},        spawn,         SHCMD("dsurfraw discog")}),
+    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_s}},               spawn,         {.v = (const  char *[]){"dsurfraw", "-d", NULL}}}),
+    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_y}},               spawn,         {.v = (const  char *[]){"dsurfraw", "-d", "-e", "youtube", NULL}}}),
+    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_a}},               spawn,         SHCMD("dsurfraw -d -e archwiki")}),
+    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_p}},               spawn,         SHCMD("surfraw -e -q \"$(xclip -selection primary -o)\"")}),
+    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_d}},               spawn,         SHCMD("dsurfraw -d -e duckduckgo")}),
+    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_r}},               spawn,         SHCMD("dsurfraw -d -e reddit")}),
+    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_f}},               spawn,         SHCMD("dsurfraw -d -e github")}),
+    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_i}},               spawn,         SHCMD("dsurfraw -d -e imdb")}),
+    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_g}},               spawn,         SHCMD("dsurfraw -d -e google chromium")}),
+    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_t}},               spawn,         SHCMD("dsurfraw -d -e duckduckgo torbrowser-launcher")}),
+    &((Keychord){2, {{MODKEY, XK_w}, {ShiftMask, XK_g}},       spawn,         SHCMD("dsurfraw -d -e google firefox")}),
+    &((Keychord){2, {{MODKEY, XK_w}, {Mod1Mask, XK_g}},        spawn,         SHCMD("dsurfraw -d -e google luakit")}),
+    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_l}},               spawn,         SHCMD("dsurfraw -d -e archwiki luakit")}),
+    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_h}},               spawn,         SHCMD("dsurfraw -d -e wikipedia luakit")}),
+    &((Keychord){2, {{MODKEY, XK_w}, {ShiftMask, XK_d}},       spawn,         SHCMD("dsurfraw -d -e duckduckgo librewolf")}),
+    &((Keychord){2, {{MODKEY, XK_w}, {Mod1Mask, XK_d}},        spawn,         SHCMD("dsurfraw -d -e discog")}),
 
     /* Web browsers:        <Alt+b>  +    <KEY>                launches       select browsers */
     &((Keychord){2, {{Mod1Mask, XK_b}, {0, XK_s}},             spawn,         SHCMD("dsurfraw")}),  /* dmenu searchbar surfraw wrapper */
@@ -451,41 +464,73 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{ShiftMask, XK_F1}},                 spawn, {.v = (const char *[]){"linkhandler", NULL}}}),
     &((Keychord){1, {{ShiftMask, XK_F2}},                 spawn, {.v = (const char *[]){"pkill", "piper-tts", NULL}}}),
     &((Keychord){1, {{ShiftMask, XK_F3}},                 spawn, {.v = (const char *[]){"readit", "-c", NULL}}}),
-    &((Keychord){1, {{ShiftMask, XK_F4}},                 spawn, {.v = (const char *[]){"toggleblur", NULL}}}),
-    &((Keychord){1, {{ShiftMask, XK_F5}},                 spawn, {.v = (const char *[]){"walfeh", NULL}}}),
-    &((Keychord){1, {{ShiftMask, XK_F6}},                 spawn, {.v = (const char *[]){"yankzp", NULL}}}),
-    &((Keychord){1, {{ShiftMask, XK_F7}},                 spawn, {.v = (const char *[]){"yankmon", "1", NULL}}}),
-    &((Keychord){1, {{ShiftMask, XK_F8}},                 spawn, {.v = (const char *[]){"readit", "-c", NULL}}}),
+    &((Keychord){1, {{ShiftMask, XK_F4}},                 spawn, {.v = (const char *[]){"walfeh", "-backward", NULL}}}),
+    &((Keychord){1, {{ShiftMask, XK_F5}},                 spawn, {.v = (const char *[]){"walfeh", "-d", NULL}}}),
+    &((Keychord){1, {{ShiftMask, XK_F6}},                 spawn, {.v = (const char *[]){"walfeh" , "-forward", NULL}}}),
+    &((Keychord){1, {{ShiftMask, XK_F7}},                 spawn, {.v = (const char *[]){"toggleblur", NULL}}}),
+    &((Keychord){1, {{ShiftMask, XK_F8}},                 spawn, {.v = (const char *[]){"yankmon", NULL}}}),
     &((Keychord){1, {{ShiftMask, XK_F9}},                 spawn, {.v = (const char *[]){"sd", NULL}}}),
     &((Keychord){1, {{ShiftMask, XK_F10}},                spawn, {.v = (const char *[]){"redunst", NULL}}}),
-    &((Keychord){1, {{ShiftMask, XK_F11}},                spawn, {.v = (const char *[]){"xmouse", NULL}}}),
+    &((Keychord){1, {{ShiftMask, XK_F11}},                spawn, {.v = (const char *[]){"yankzp", NULL}}}),
     &((Keychord){1, {{ShiftMask, XK_F12}},                spawn, {.v = (const char *[]){"remaps", NULL}}}),
 
+    /*                 Ctrl + [F1-F12]                          for handy scripts and utilities */
+    &((Keychord){1, {{ControlMask, XK_F1}},                 spawn,  {.v = (const char *[]){"cliplink", NULL}}}),
+    &((Keychord){1, {{ControlMask, XK_F2}},                 spawn,  {.v = (const char *[]){"primarylink", NULL}}}),
+    &((Keychord){1, {{ControlMask, XK_F3}},                 spawn,  {.v = (const char *[]){"mpvq", "play", NULL}}}),
+    &((Keychord){1, {{ControlMask, XK_F4}},                 spawn,  {.v = (const char *[]){"mpvq", "dnd", NULL}}}),
+    &((Keychord){1, {{ControlMask, XK_F5}},                 spawn,  {.v = (const char *[]){"mpv_ipc", NULL}}}),
+    &((Keychord){1, {{ControlMask, XK_F6}},                 spawn,  {.v = (const char *[]){"mpvq", "download", NULL}}}),
+    &((Keychord){1, {{ControlMask, XK_F7}},                 togglescratch,  {.ui = 3}}),
+    &((Keychord){1, {{ControlMask, XK_F8}},                 spawn,  {.v = (const char *[]){"stexec", "mpvqdl", NULL}}}),
+    &((Keychord){1, {{ControlMask, XK_F9}},                 spawn,  {.v = (const char *[]){"stexec", "mpvplay" NULL}}}),
+    &((Keychord){1, {{ControlMask, XK_F10}},                spawn,  {.v = (const char *[]){"stexec", "mpvqfzf", NULL}}}),
+    &((Keychord){1, {{ControlMask, XK_F11}},                togglescratch,  {.ui = 4}}),
+    &((Keychord){1, {{ControlMask, XK_F12}},                spawn,  {.v = (const char *[]){"xkill", NULL}}}),
+    /* &((Keychord){1, {{ControlMask, XK_F11}},                spawn,  {.v = (const char *[]){"", "", NULL}}}), */
+
+    /* &((Keychord){1, {{Mod1Mask, XK_F1}},                 spawn,  {.v = (const char *[]){"cliplink", NULL}}}), */
+    /* &((Keychord){1, {{Mod1Mask, XK_F2}},                 spawn,  {.v = (const char *[]){"primarylink", NULL}}}), */
+    /* &((Keychord){1, {{Mod1Mask, XK_F3}},                 spawn,  {.v = (const char *[]){"mpvq", "play", NULL}}}), */
+    /* &((Keychord){1, {{Mod1Mask, XK_F4}},                 spawn,  {.v = (const char *[]){"mpvq", "dnd", NULL}}}), */
+    /* &((Keychord){1, {{Mod1Mask, XK_F5}},                 spawn,  {.v = (const char *[]){"mpvq", "play" NULL}}}), */
+    /* &((Keychord){1, {{Mod1Mask, XK_F6}},                 spawn,  {.v = (const char *[]){"mpvq", "next", NULL}}}), */
+    /* &((Keychord){1, {{Mod1Mask, XK_F7}},                 spawn,  {.v = (const char *[]){"stexec", "mpvplay", NULL}}}), */
+    /* &((Keychord){1, {{Mod1Mask, XK_F8}},                 togglescratch,  {.ui = 4}}), */
+    /* &((Keychord){1, {{Mod1Mask, XK_F9}},                 spawn,  {.v = (const char *[]){"alacritty","-e", "yazi", NULL}}}), */
+    /* &((Keychord){1, {{Mod1Mask, XK_F10}},                spawn,  {.v = (const char *[]){"stexec", "mpvqfzf", NULL}}}), */
+    /* &((Keychord){1, {{Mod1Mask, XK_F11}},                spawn,  {.v = (const char *[]){"pcmanfm", NULL}}}), */
+    /* &((Keychord){1, {{Mod1Mask, XK_F12}},                spawn,  {.v = (const char *[]){"xkill", NULL}}}), */
     /* RightHandSide Redundancies */
     &((Keychord){1, {{0, XK_F10}},                        spawn, {.v = (const char *[]){"unswal", "1", NULL}}}),
     &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_w}},         spawn, {.v = (const char *[]){"xmouse", NULL}}}),
     &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_k}},         spawn, {.v = (const char *[]){"xmouse", NULL}}}),
     &((Keychord){2, {{Mod1Mask, XK_j},{0, XK_k}},         spawn, {.v = (const char *[]){"xmouse", NULL}}}),
     &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_h}},         spawn, {.v = (const char *[]){"yankmon", "1", NULL}}}),
-    &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_l}},         spawn, {.v = (const char *[]){"linkhandler", NULL}}}),
-    &((Keychord){2, {{Mod1Mask, XK_j},{0, XK_l}},         spawn, {.v = (const char *[]){"linkhandler", NULL}}}),
+    &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_l}},         spawn, {.v = (const char *[]){"linkclip", NULL}}}),
+    &((Keychord){2, {{Mod1Mask, XK_a},{0, XK_a}},         spawn, {.v = (const char *[]){"alacritty", "-e", "yazi", NULL}}}),
     &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_e}},         spawn, {.v = (const char *[]){"sd", NULL}}}),
     &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_b}},         spawn, {.v = (const char *[]){"toggleblur", NULL}}}),
+    &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_d}},         spawn, {.v = (const char *[]){"xdrag", NULL}}}),
+    &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_t}},         spawn, {.v = (const char *[]){"dndmpv", NULL}}}),
 
     /*&((Keychord){2, {{MODKEY, XK_}, {MODKEY, XK_m}}, spawn, SHCMD("xmouse")}),*/
 
     /* Single            Ctrl + Keypad [0-9]                 script testing quick bindings */
-    &((Keychord){1, {{ControlMask, XK_KP_Insert}},    spawn, SHCMD("~/.local/bin/numpad0")}),
-    &((Keychord){1, {{ControlMask, XK_KP_End}},       spawn, SHCMD("~/.local/bin/numpad1")}),
-    &((Keychord){1, {{ControlMask, XK_KP_Down}},      spawn, SHCMD("~/.local/bin/numpad2")}),
-    &((Keychord){1, {{ControlMask, XK_KP_Page_Down}}, spawn, SHCMD("~/.local/bin/numpad3")}),
-    &((Keychord){1, {{ControlMask, XK_KP_Left}},      spawn, SHCMD("~/.local/bin/numpad4")}),
-    &((Keychord){1, {{ControlMask, XK_KP_Begin}},     spawn, SHCMD("~/.local/bin/numpad5")}),
-    &((Keychord){1, {{ControlMask, XK_KP_Right}},     spawn, SHCMD("~/.local/bin/numpad6")}),
-    &((Keychord){1, {{ControlMask, XK_KP_Home}},      spawn, SHCMD("~/.local/bin/numpad7")}),
-    &((Keychord){1, {{ControlMask, XK_KP_Up}},        spawn, SHCMD("~/.local/bin/numpad8")}),
-    &((Keychord){1, {{ControlMask, XK_KP_Page_Up}},   spawn, SHCMD("~/.local/bin/numpad9")}),
+    &((Keychord){1, {{ControlMask, XK_KP_Insert}},        spawn, SHCMD("numpad0")}),
+    &((Keychord){1, {{ControlMask, XK_KP_End}},           spawn, SHCMD("numpad1")}),
+    &((Keychord){1, {{ControlMask, XK_KP_Down}},          spawn, SHCMD("numpad2")}),
+    &((Keychord){1, {{ControlMask, XK_KP_Page_Down}},     spawn, SHCMD("numpad3")}),
+    &((Keychord){1, {{ControlMask, XK_KP_Left}},          spawn, SHCMD("numpad4")}),
+    &((Keychord){1, {{ControlMask, XK_KP_Begin}},         spawn, SHCMD("numpad5")}),
+    &((Keychord){1, {{ControlMask, XK_KP_Right}},         spawn, SHCMD("numpad6")}),
+    &((Keychord){1, {{ControlMask, XK_KP_Home}},          spawn, SHCMD("numpad7")}),
+    &((Keychord){1, {{ControlMask, XK_KP_Up}},            spawn, SHCMD("numpad8")}),
+    &((Keychord){1, {{ControlMask, XK_KP_Page_Up}},       spawn, SHCMD("numpad9")}),
 
+    &((Keychord){2, {{MODKEY,XK_c}, {0, XK_x}},              spawn,          SHCMD("xclip -selection primary -o | xclip -selection clipboard")}),
+    &((Keychord){2, {{MODKEY,XK_c}, {0, XK_p}},              spawn,          SHCMD("xclip -selection clipboard -o | xclip -selection primary")}),
+    &((Keychord){2, {{MODKEY,XK_c}, {ShiftMask, XK_x}},      spawn,          SHCMD("xsel --exchange")}),
     /* Tests de manipulation de texte par registres */
     /* &((Keychord){2, {{Mod1Mask,XK_c}, {0, XK_r}},              spawn,          SHCMD("echo \"$(xclip -o)\" >> ~/Notes/clipregisters/r")}), */
     /* &((Keychord){2, {{Mod1Mask,XK_c}, {ControlMask, XK_r}},    spawn,          SHCMD("echo \"\" > ~/Notes/clipregisters/r")}), */
@@ -493,10 +538,7 @@ static Keychord *keychords[] = {
     /* &((Keychord){2, {{Mod1Mask,XK_c}, {ControlMask, XK_a}},    spawn,          SHCMD("echo \"\" > ~/Notes/clipregisters/a")}), */
     /* &((Keychord){2, {{Mod1Mask,XK_c}, {0, XK_s}},              spawn,          SHCMD("echo \"$(xclip -o)\" >> ~/Notes/clipregisters/s")}), */
     /* &((Keychord){2, {{Mod1Mask,XK_c}, {ControlMask, XK_s}},    spawn,          SHCMD("echo \"\" > ~/Notes/clipregisters/s")}), */
-    /* &((Keychord){2, {{Mod1Mask,XK_c}, {0, XK_x}},              spawn,          SHCMD("xclip -selection primary -o | xsel -s -a")}), */
-    /* &((Keychord){2, {{Mod1Mask,XK_c}, {ControlMask, XK_x}},    spawn,          SHCMD("xsel --exchange")}), */
     /* &((Keychord){2, {{Mod1Mask,XK_c}, {0, XK_d}},              spawn,          SHCMD("echo \"$(xclip -selection secondary -o)\" > ~/Notes/clipregisters/a")}), */
-    /* &((Keychord){2, {{Mod1Mask,XK_c}, {0, XK_p}},              spawn,          SHCMD("xclip -selection clipboard -o | xclip -selection primary")}), */
 
     /* Lecture des registres */
     /* &((Keychord){1, {{MODKEY|ShiftMask|ControlMask, XK_r}},    spawn,          SHCMD("cat ~/Notes/clipregisters/r | tts")}), */
