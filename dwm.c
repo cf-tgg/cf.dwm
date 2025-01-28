@@ -1381,7 +1381,12 @@ void keypress(XEvent *e) {
 
   while (1) {
     ev = &event.xkey;
-    keysym = XKeycodeToKeysym(dpy, (KeyCode)ev->keycode, 0);
+
+    int keysyms_per_keycode;
+    KeySym *keysyms = XGetKeyboardMapping(dpy, ev->keycode, 1, &keysyms_per_keycode);
+    keysym = keysyms[0];
+    XFree(keysyms);
+
     size_t w = 0;
     for (int i = 0; i < r; i++) {
       if (keysym == (*(rpointer + i))->keys[currentkey].keysym &&
@@ -1776,8 +1781,7 @@ void resizeclient(Client *c, int x, int y, int w, int h) {
   c->oldh = c->h;
   c->h = wc.height = h;
   wc.border_width = c->bw;
-  XConfigureWindow(dpy, c->win, CWX | CWY | CWWidth | CWHeight | CWBorderWidth,
-                   &wc);
+  XConfigureWindow(dpy, c->win, CWX | CWY | CWWidth | CWHeight | CWBorderWidth, &wc);
   configure(c);
   XSync(dpy, False);
 }
@@ -1788,7 +1792,6 @@ void resizemouse(const Arg *arg) {
   Monitor *m;
   XEvent ev;
   Time lasttime = 0;
-
   if (!(c = selmon->sel))
     return;
   if (c->isfullscreen) /* no support resizing fullscreen windows by mouse */
@@ -1832,8 +1835,7 @@ void resizemouse(const Arg *arg) {
   XWarpPointer(dpy, None, c->win, 0, 0, 0, 0, c->w + c->bw - 1,
                c->h + c->bw - 1);
   XUngrabPointer(dpy, CurrentTime);
-  while (XCheckMaskEvent(dpy, EnterWindowMask, &ev))
-    ;
+  while (XCheckMaskEvent(dpy, EnterWindowMask, &ev));
   if ((m = recttomon(c->x, c->y, c->w, c->h)) != selmon) {
     sendmon(c, m);
     selmon = m;
