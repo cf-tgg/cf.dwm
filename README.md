@@ -1,14 +1,14 @@
 
 # Table of Contents
 
-1.  [A bloated LARBS.](#org496a2c2)
-2.  [Luke's Built-In patches and features](#org49361c3)
-3.  [Some of the tweaks.](#orgc681cc9)
-        1.  [TODO\\'s](#org2b5f867)
+1.  [A bloated LARBS.](#org839ff09)
+2.  [Luke's Built-In patches and features](#orgb4f129e)
+3.  [Some of the tweaks..](#org5233058)
+        1.  [TODO's (2025-02-04 06:30:00 EST)](#org601af55)
 
 
 
-<a id="org496a2c2"></a>
+<a id="org839ff09"></a>
 
 # A bloated LARBS.
 
@@ -21,7 +21,7 @@ what you expect/like. I'd say make your own! I might document my customizations 
 start from scratch at this point.
 
 
-<a id="org49361c3"></a>
+<a id="orgb4f129e"></a>
 
 # Luke's Built-In patches and features
 
@@ -40,29 +40,29 @@ start from scratch at this point.
 -   [dwm-alpha](https://dwm.suckless.org/patches/alpha/): Allow dwm to have translucent bars, while keeping all the text on it opaque.
 
 
-<a id="orgc681cc9"></a>
+<a id="org5233058"></a>
 
-# Some of the tweaks.
+# Some of the tweaks..
 
 -   [Grid Layouts]: Few additional grid layouts to try them out.
 -   [dwm-dynamicswallow-patch](https://dwm.suckless.org/patches/dynamicswallow/): Introduces "dynamic" window swallowing to dwm. 
-    -   the patch provides S-<mouse1-drag> for mouse drag swallows.
+    -   the patch provides (<kbd>Shift-<mouse1-drag></kbd>) for mouse dragging swallows.
     -   The [dwmswallow](./dwmswallow) command allows for suckless scripting of custom window swallow behaviours basicly.
-        for example, I use the keychord (<kdb>Alt-[h,j,k,l] [h,j,k,l]<kdb>),
-        repeating [h,j,k,l] "confirms" I want to swallow the window in that vim-ish motion's direction.
-        or (<kbd>Alt-[Left,Down,Up,Right]<kbd>) to immediately swallow adjacent windows dynamically.
-        -   The xdotool shell scripts are included in the \`swallow<sub>scripts</sub>' folder.
--   [cfacts](https://dwm.suckless.org/patches/cfacts/): Patched vanitygaps.c with support for cfacts and I believe some of the added layouts.
+        for example, I use the keychord (<kdb>Alt-[h,j,k,l] [h,j,k,l]</kdb>),
+        repeating (<kbd>[h,j,k,l]</kbd>) "confirms" I want to swallow the window in that vim-ish motion's direction.
+        or (<kbd>Alt-[Left,Down,Up,Right]</kbd>) to immediately swallow adjacent windows dynamically.
+        -   The xdotool shell scripts are included in the [swallow<sub>scripts</sub>](./swallow_scripts) folder.
+-   [cfacts](https://dwm.suckless.org/patches/cfacts/): Patched [vanitygaps](./vanitygaps.c) with support for cfacts and I believe some of the added layouts.
 -   [defaulttransparency](https://dwm.suckless.org/patches/defaulttransparency/): This patch adds a default transparency parameter to config.h.
 -   [KeyChords](https://dwm.suckless.org/patches/keychord/dwm-keychord-6.4.diff): When I thought I'd have enough free keybinding, I discovered Emacs.
 -   [barpadding](https://dwm.suckless.org/patches/barpadding/dwm-barpadding-20211020-a786211.diff): Round corners look awkful without bar padding.
 
 
-<a id="org2b5f867"></a>
+<a id="org601af55"></a>
 
-### TODO\\'s
+### TODO's (2025-02-04 06:30:00 EST)
 
-1.  TODO [ ] Cleanup my dwm related shell scripts.
+1.  TODO [ ] Cleanup and add referenced dwm shell scripts.
 
 2.  TODO [ ] Add script symlinks deployment to Makefile.
 
