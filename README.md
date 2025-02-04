@@ -1,13 +1,13 @@
 
 # Table of Contents
 
-1.  [A bloated LARBS.](#orge7eca79)
-2.  [Luke's Built-In patches and features](#org266857b)
-3.  [Some of the tweaks.](#org42b5d8e)
+1.  [A bloated LARBS.](#org7967c27)
+2.  [Luke's Built-In patches and features](#orge8c5890)
+3.  [Some of the tweaks.](#orgf391bf5)
 
 
 
-<a id="orge7eca79"></a>
+<a id="org7967c27"></a>
 
 # A bloated LARBS.
 
@@ -20,7 +20,7 @@ what you expect/like. I'd say make your own! I might document my customizations 
 start from scratch at this point.
 
 
-<a id="org266857b"></a>
+<a id="orge8c5890"></a>
 
 # Luke's Built-In patches and features
 
@@ -39,7 +39,7 @@ start from scratch at this point.
 -   [dwm-alpha](https://dwm.suckless.org/patches/alpha/): Allow dwm to have translucent bars, while keeping all the text on it opaque.
 
 
-<a id="org42b5d8e"></a>
+<a id="orgf391bf5"></a>
 
 # Some of the tweaks.
 
@@ -48,9 +48,9 @@ start from scratch at this point.
     -   The [dwmswallow](./dwmswallow) command allows for suckless scripting of custom window swallow behaviours basicly.
         for example, I use the keychord \`M-[h,j,k,l] [h,j,k,l]' (\`Mod1Mask-[h,j,k,l] [h,j,k,l]')
         Repeating [h,j,k,l] to "confirm" I want to swallow the window in that motion's direction.
-        or Mod1Mask-[Left,Down,Up,Right] to immediately swallow adjacent windows dynamically, using simple
-        xdotool shell script that you can take a look at in swallow<sub>scripts</sub>.
--   [cfacts](https://dwm.suckless.org/patches/cfacts/): Added full patched vanitygaps.c to adding support for cfacts in addition to mfacts
+        or M-[Left,Down,Up,Right] to immediately swallow adjacent windows dynamically.
+        -   The xdotool shell scripts are included in the \`swallow<sub>scripts</sub>' folder. (TODO: add symlink to \`.local/bin' in Makefile).
+-   [cfacts](https://dwm.suckless.org/patches/cfacts/): Added full patched vanitygaps.c adding support for cfacts (mfacts were built in).
 -   [defaulttransparency](https://dwm.suckless.org/patches/defaulttransparency/): This patch adds a default transparency parameter to config.h.
 -   [KeyChords](https://dwm.suckless.org/patches/keychord/dwm-keychord-6.4.diff): When I thought I'd have enough free keybinding, I discovered Emacs.
 -   [barpadding](https://dwm.suckless.org/patches/barpadding/dwm-barpadding-20211020-a786211.diff): Round corners look awkful without bar padding.
