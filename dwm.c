@@ -38,9 +38,11 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+
 #ifdef XINERAMA
 #include <X11/extensions/Xinerama.h>
 #endif /* XINERAMA */
+
 #include <X11/Xft/Xft.h>
 #include <X11/Xlib-xcb.h>
 #include <xcb/res.h>
@@ -386,7 +388,7 @@ static Swallow *swallows;
 static Window root, wmcheckwin;
 unsigned int currentkey = 0;
 
-static int useargb = 0;
+static int useargb = 1;
 static Visual *visual;
 static int depth;
 static Colormap cmap;
@@ -541,7 +543,8 @@ void arrange(Monitor *m) {
 }
 
 void arrangemon(Monitor *m) {
-  strncpy(m->ltsymbol, m->lt[m->sellt]->symbol, sizeof m->ltsymbol);
+  /* strncpy(m->ltsymbol, m->lt[m->sellt]->symbol, sizeof m->ltsymbol); */
+  snprintf(m->ltsymbol, sizeof(m->ltsymbol), "%s", m->lt[m->sellt]->symbol);
   if (m->lt[m->sellt]->arrange)
     m->lt[m->sellt]->arrange(m);
 }
@@ -2025,8 +2028,10 @@ void setlayout(const Arg *arg) {
     selmon->lt[selmon->sellt] =
         selmon->pertag->ltidxs[selmon->pertag->curtag][selmon->sellt] =
             (Layout *)arg->v;
-  strncpy(selmon->ltsymbol, selmon->lt[selmon->sellt]->symbol,
-          sizeof selmon->ltsymbol);
+  /* strncpy(selmon->ltsymbol, selmon->lt[selmon->sellt]->symbol, sizeof selmon->ltsymbol); */
+  /* snprintf(selmon->ltsymbol, sizeof(selmon->ltsymbol), "%s", selmon->lt[selmon->sellt]->symbol); */
+  if (strcmp(selmon->ltsymbol, selmon->lt[selmon->sellt]->symbol) != 0)
+    snprintf(selmon->ltsymbol, sizeof(selmon->ltsymbol), "%s", selmon->lt[selmon->sellt]->symbol);
   if (selmon->sel)
     arrange(selmon);
   else
