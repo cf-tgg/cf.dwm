@@ -37,6 +37,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <stdbool.h>
 #include <unistd.h>
 
 #ifdef XINERAMA
@@ -231,7 +232,8 @@ static void clientmessage(XEvent *e);
 static void configure(Client *c);
 static void configurenotify(XEvent *e);
 static void configurerequest(XEvent *e);
-static void copyvalidchars(char *text, char *rawtext);
+/* static void copyvalidchars(char *text, char *rawtext); */
+static void copyvalidchars(char *text, const char *rawtext);
 static Monitor *createmon(void);
 static void destroynotify(XEvent *e);
 static void detach(Client *c);
@@ -875,16 +877,57 @@ void configurerequest(XEvent *e) {
   XSync(dpy, False);
 }
 
-void copyvalidchars(char *text, char *rawtext) {
-  int i = -1, j = 0;
-
-  while (rawtext[++i]) {
-    if ((unsigned char)rawtext[i] >= ' ') {
-      text[j++] = rawtext[i];
-    }
-  }
-  text[j] = '\0';
+bool is_utf8_continuation(unsigned char c) {
+    return (c & 0xC0) == 0x80;
 }
+
+void copyvalidchars(char *text, const char *rawtext) {
+    int i = 0, j = 0;
+    unsigned char c;
+
+    while ((c = (unsigned char)rawtext[i])) {
+        if (c >= 32 && c <= 126) {  // Printable ASCII
+            text[j++] = rawtext[i++];
+        }
+        // 2-byte UTF-8 sequence: 110xxxxx 10xxxxxx
+        else if ((c & 0xE0) == 0xC0 && is_utf8_continuation(rawtext[i + 1])) {
+            text[j++] = rawtext[i++];
+            text[j++] = rawtext[i++];
+        }
+        // 3-byte UTF-8 sequence: 1110xxxx 10xxxxxx 10xxxxxx
+        else if ((c & 0xF0) == 0xE0 &&
+                 is_utf8_continuation(rawtext[i + 1]) &&
+                 is_utf8_continuation(rawtext[i + 2])) {
+            text[j++] = rawtext[i++];
+            text[j++] = rawtext[i++];
+            text[j++] = rawtext[i++];
+        }
+        // 4-byte UTF-8 sequence: 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+        else if ((c & 0xF8) == 0xF0 &&
+                 is_utf8_continuation(rawtext[i + 1]) &&
+                 is_utf8_continuation(rawtext[i + 2]) &&
+                 is_utf8_continuation(rawtext[i + 3])) {
+            text[j++] = rawtext[i++];
+            text[j++] = rawtext[i++];
+            text[j++] = rawtext[i++];
+            text[j++] = rawtext[i++];
+        }
+        else {
+            i++;  // Skip invalid or non-printable bytes
+        }
+    }
+    text[j] = '\0';
+}
+/* void copyvalidchars(char *text, char *rawtext) { */
+/*   int i = -1, j = 0; */
+
+/*   while (rawtext[++i]) { */
+/*     if ((unsigned char)rawtext[i] >= ' ') { */
+/*       text[j++] = rawtext[i]; */
+/*     } */
+/*   } */
+/*   text[j] = '\0'; */
+/* } */
 
 Monitor *createmon(void) {
   Monitor *m;
@@ -2105,15 +2148,12 @@ void setup(void) {
   netatom[NetWMName] = XInternAtom(dpy, "_NET_WM_NAME", False);
   netatom[NetWMState] = XInternAtom(dpy, "_NET_WM_STATE", False);
   netatom[NetWMCheck] = XInternAtom(dpy, "_NET_SUPPORTING_WM_CHECK", False);
-  netatom[NetWMFullscreen] =
-      XInternAtom(dpy, "_NET_WM_STATE_FULLSCREEN", False);
+  netatom[NetWMFullscreen] = XInternAtom(dpy, "_NET_WM_STATE_FULLSCREEN", False);
   netatom[NetWMWindowType] = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE", False);
-  netatom[NetWMWindowTypeDialog] =
-      XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_DIALOG", False);
+  netatom[NetWMWindowTypeDialog] = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_DIALOG", False);
   netatom[NetClientList] = XInternAtom(dpy, "_NET_CLIENT_LIST", False);
   netatom[NetClientInfo] = XInternAtom(dpy, "_NET_CLIENT_INFO", False);
-  netatom[NetWMWindowsOpacity] =
-      XInternAtom(dpy, "_NET_WM_WINDOW_OPACITY", False);
+  netatom[NetWMWindowsOpacity] = XInternAtom(dpy, "_NET_WM_WINDOW_OPACITY", False);
   /* init cursors */
   cursor[CurNormal] = drw_cur_create(drw, XC_left_ptr);
   cursor[CurResize] = drw_cur_create(drw, XC_sizing);
@@ -2130,13 +2170,13 @@ void setup(void) {
   wmcheckwin = XCreateSimpleWindow(dpy, root, 0, 0, 1, 1, 0, 0, 0);
   XChangeProperty(dpy, wmcheckwin, netatom[NetWMCheck], XA_WINDOW, 32,
                   PropModeReplace, (unsigned char *)&wmcheckwin, 1);
+  /* XChangeProperty(dpy, wmcheckwin, netatom[NetWMName], utf8string, 8, PropModeReplace, (unsigned char *)"dwm", 3); */
   XChangeProperty(dpy, wmcheckwin, netatom[NetWMName], utf8string, 8,
                   PropModeReplace, (unsigned char *)"dwm", 3);
   XChangeProperty(dpy, root, netatom[NetWMCheck], XA_WINDOW, 32,
                   PropModeReplace, (unsigned char *)&wmcheckwin, 1);
   /* EWMH support per view */
-  XChangeProperty(dpy, root, netatom[NetSupported], XA_ATOM, 32,
-                  PropModeReplace, (unsigned char *)netatom, NetLast);
+  XChangeProperty(dpy, root, netatom[NetSupported], XA_ATOM, 32, PropModeReplace, (unsigned char *)netatom, NetLast);
   XDeleteProperty(dpy, root, netatom[NetClientList]);
   XDeleteProperty(dpy, root, netatom[NetClientInfo]);
   /* select events */

@@ -33,9 +33,9 @@ static const char *fonts[] = {
     "Iosevka Nerd Font:size=12:style=light",
     "Iosevka Nerd Font Mono:size=12:style=Regular",
     "Iosevka Term,iosevka nerd font mono:size=16",
-    "FontAwesome:pixelsize=36:antialias=true:autohint=true",
-    "Material Icons:pixelsize=36:antialias=true:autohint=true",
-    "NotoColorEmoji:pixelsize=16:antialias=true:autohint=true"
+    "FontAwesome:pixelsize=44:antialias=true:autohint=true",
+    "Material Icons:pixelsize=44:antialias=true:autohint=true",
+    "NotoColorEmoji:pixelsize=22:antialias=true:autohint=true"
 };
 
 static char normbgcolor[] = "#010101";
@@ -220,7 +220,7 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{MODKEY|ShiftMask,                 XK_grave}},       spawn,         {.v = (const char *[]){"dmenuunicode", NULL}}}),
     &((Keychord){1, {{MODKEY,                           XK_BackSpace}},   spawn,         {.v = (const char *[]){"sysact",    NULL}}}),
     &((Keychord){1, {{MODKEY | ShiftMask,               XK_BackSpace}},   spawn,         {.v = (const char *[]){"sysact",    NULL}}}),
-    &((Keychord){1, {{Mod1Mask,                         XK_space}},       spawn,         {.v = (const char *[]){"piper-tgpt", NULL}}}),
+    &((Keychord){1, {{MODKEY|ControlMask,               XK_space}},       spawn,         {.v = (const char *[]){"piper-tgpt", NULL}}}),
     &((Keychord){1, {{MODKEY,                           XK_space}},       spawn,         {.v = (const char *[]){"kb-toggle", NULL}}}),
     &((Keychord){1, {{MODKEY | ShiftMask,               XK_w}},           spawn,         {.v = (const char *[]){TERMINAL, "-e", "sudo", "nmtui", NULL}}}),
     &((Keychord){1, {{MODKEY,                           XK_r}},           spawn,         {.v = (const char *[]){TERMINAL, "-e", "lfub", NULL}}}),
