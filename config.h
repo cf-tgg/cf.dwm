@@ -1,4 +1,4 @@
-/* [ dwm/config.h ] [ last update: 2025-02-01 13:21:17 EST ]
+/* [ dwm/config.h ] [ last update: 2025-02-05 07:15:28 EST ]
  *         __       _
  *    ___ / _|   __| |_      ___ __ ___
  *   / __| |_   / _` \ \ /\ / / '_ ` _ \
@@ -29,13 +29,14 @@ static const int sidepad =  0; /* horizontal padding of bar */
 static const int user_bh = 48; /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
 
 static const char *fonts[] = {
-    "Caskaydia Cove Nerd Font Mono:size=9:style=Book",
-    "Iosevka Nerd Font:size=12:style=light",
-    "Iosevka Nerd Font Mono:size=12:style=Regular",
-    "Iosevka Term,iosevka nerd font mono:size=16",
-    "FontAwesome:pixelsize=44:antialias=true:autohint=true",
-    "Material Icons:pixelsize=44:antialias=true:autohint=true",
-    "NotoColorEmoji:pixelsize=22:antialias=true:autohint=true"
+    "Iosevka Nerd Font:size=9:style=Regular:antialias=true:autohint=true",
+    "Iosevka Nerd Font Mono:size=11:style=Regular:antialias=true:autohint=true",
+    "Iosevka Nerd Font Propo:size=10:style=Regular:antialias=true:autohint=true",
+    "Caskaydia Cove Nerd Font:size=9:style=Book:antialias=true:autohint=true",
+    "FontAwesome:pixelsize=36:antialias=true:autohint=true",
+    "Iosevka Term:size=16:antialias=true:autohint=true",
+    "NotoColorEmoji:pixelsize=22:antialias=true:autohint=true",
+    "Material Icons:pixelsize=36:antialias=true:autohint=true"
 };
 
 static char normbgcolor[] = "#010101";
@@ -483,7 +484,7 @@ static Keychord *keychords[] = {
 
     /*                 Shift + [F1-F12]                          for handy scripts and utilities */
     &((Keychord){1, {{ShiftMask, XK_F1}},                 spawn, {.v = (const char *[]){"linkhandler", NULL}}}),
-    &((Keychord){1, {{ShiftMask, XK_F2}},                 spawn, {.v = (const char *[]){"killall", "piper-tts", NULL}}}),
+    &((Keychord){1, {{ShiftMask, XK_F2}},                 spawn, {.v = (const char *[]){"killall", "pacat", NULL}}}),
     &((Keychord){1, {{ShiftMask, XK_F3}},                 spawn, {.v = (const char *[]){"readit", "-c", NULL}}}),
     &((Keychord){1, {{ShiftMask, XK_F4}},                 spawn, {.v = (const char *[]){"walfeh", "-backward", NULL}}}),
     &((Keychord){1, {{ShiftMask, XK_F5}},                 spawn, {.v = (const char *[]){"walfeh", "-toggle", NULL}}}),
@@ -501,12 +502,15 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{0, XK_F4}},                         spawn, {.v = (const char *[]){"mpc", "prev", NULL}}}),
     &((Keychord){1, {{0, XK_F5}},                         spawn, {.v = (const char *[]){"mpctl", NULL}}}),
     &((Keychord){1, {{0, XK_F6}},                         spawn, {.v = (const char *[]){"mpc", "next", NULL}}}),
-    &((Keychord){1, {{0, XK_F7}},                         spawn, {.v = (const char *[]){"playmuse", NULL}}}),
-    &((Keychord){1, {{0, XK_F8}},                         spawn, {.v = (const char *[]){"mpc-voice-search", NULL}}}),
+    /* &((Keychord){2, {{0, XK_F7}},                         spawn, {.v = (const char *[]){"playmuse", NULL}}}), */
+    /* &((Keychord){2, {{0, XK_F8}},                         spawn, {.v = (const char *[]){"mpc-voice-search", NULL}}}), */
     &((Keychord){1, {{0, XK_F9}},                         spawn, {.v = (const char *[]){"touchpad_toggle", NULL}}}),
     &((Keychord){1, {{0, XK_F10}},                        spawn, {.v = (const char *[]){"unswal", "1", NULL}}}),
     /* &((Keychord){1, {{0, XK_F11}},                        spawn, {.v = (const char *[]){"yankzp", NULL}}}), */
-    &((Keychord){1, {{0, XK_F12}},                        spawn, SHCMD("{ remaps; redunst ; }")}),
+    &((Keychord){1, {{0, XK_F12}},                        spawn, {.v = (const char *[]){"redunst", NULL}}}),
+
+    &((Keychord){2, {{Mod1Mask, XK_F7}, {0, XK_F7}},      spawn, {.v = (const char *[]){"playmuse", NULL}}}),
+    &((Keychord){2, {{Mod1Mask, XK_F8}, {0, XK_F8}},      spawn, {.v = (const char *[]){"mpc-voice-search", NULL}}}),
 
     /*                 Ctrl + [F1-F12]                    for scripts and utilities */
     &((Keychord){1, {{ControlMask, XK_F1}},               spawn,  {.v = (const char *[]){"cliplink", NULL}}}),
@@ -517,15 +521,16 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{ControlMask, XK_F6}},               spawn,  {.v = (const char *[]){"mpvq", "download", NULL}}}),
     &((Keychord){1, {{ControlMask, XK_F7}},               togglescratch,  {.ui = 3}}),
     &((Keychord){1, {{ControlMask, XK_F8}},               spawn,  {.v = (const char *[]){"stexec", "mpvqdl", NULL}}}),
-    &((Keychord){1, {{ControlMask, XK_F9}},               spawn,  {.v = (const char *[]){"stexec", "mpvplay", NULL}}}),
+    &((Keychord){1, {{ControlMask, XK_F9}},               spawn,  {.v = (const char *[]){"mpvplay", NULL}}}),
     &((Keychord){1, {{ControlMask, XK_F10}},              togglescratch,  {.ui = 4}}),
     &((Keychord){1, {{ControlMask, XK_F11}},              spawn,  {.v = (const char *[]){"vcn","DisplayPort-2","6", NULL}}}),
     &((Keychord){1, {{ControlMask, XK_F12}},              spawn,  {.v = (const char *[]){"xkill", NULL}}}),
     /* &((Keychord){1, {{ControlMask, XK_F11}},              spawn,  {.v = (const char *[]){"", "", NULL}}}), */
 
     &((Keychord){1, {{ControlMask|ShiftMask, XK_e}},      spawn,  {.v = (const char *[]){"emacs", NULL}}}),
+
     &((Keychord){1, {{ControlMask|ShiftMask, XK_F1}},     spawn,  {.v = (const char *[]){"cliplink", NULL}}}),
-    &((Keychord){1, {{ControlMask|ShiftMask, XK_F2}},     spawn,  {.v = (const char *[]){"emacsclient", "-c", "-n", NULL}}}),
+    &((Keychord){1, {{ControlMask|ShiftMask, XK_F2}},     spawn,  {.v = (const char *[]){"emacsclient", NULL}}}),
     &((Keychord){1, {{ControlMask|ShiftMask, XK_F3}},     spawn,  {.v = (const char *[]){"mpvqfzf", "play", NULL}}}),
     &((Keychord){1, {{ControlMask|ShiftMask, XK_F4}},     spawn,  {.v = (const char *[]){"mpvq", "dnd", NULL}}}),
     &((Keychord){1, {{ControlMask|ShiftMask, XK_F5}},     spawn,  {.v = (const char *[]){"mpvqls", NULL}}}),
@@ -535,14 +540,12 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{ControlMask|ShiftMask, XK_F9}},     spawn,  {.v = (const char *[]){"vcn", "eDP", "3", NULL}}}),
     &((Keychord){1, {{ControlMask|ShiftMask, XK_F10}},    spawn,  {.v = (const char *[]){"vcn", "DisplayPort-2", "4", NULL}}}),
     &((Keychord){1, {{ControlMask|ShiftMask, XK_F11}},    spawn,  {.v = (const char *[]){"vcn", "eDP", "5", NULL}}}),
-    &((Keychord){1, {{ControlMask|ShiftMask, XK_F12}},    spawn, {.v = (const char *[]){"vcn", "DisplayPort-2", "6", NULL}}}),
+    &((Keychord){1, {{ControlMask|ShiftMask, XK_F12}},    spawn,  {.v = (const char *[]){"vcn", "DisplayPort-2", "6", NULL}}}),
 
     &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_w}},         spawn, {.v = (const char *[]){"xmouse", NULL}}}),
-    &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_k}},         spawn, {.v = (const char *[]){"xmouse", NULL}}}),
-    &((Keychord){2, {{Mod1Mask, XK_j},{0, XK_k}},         spawn, {.v = (const char *[]){"xmouse", NULL}}}),
     &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_h}},         spawn, {.v = (const char *[]){"yankmon", "1", NULL}}}),
     &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_l}},         spawn, {.v = (const char *[]){"linkclip", NULL}}}),
-    &((Keychord){2, {{Mod1Mask, XK_a},{0, XK_a}},         spawn, {.v = (const char *[]){"wezterm", "-e", "yazi", "~/Videos/yt", NULL}}}),
+    &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_y}},         spawn, {.v = (const char *[]){"wezterm", "-e", "yazi", "~/Videos/yt", NULL}}}),
     &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_e}},         spawn, {.v = (const char *[]){"sd", NULL}}}),
     &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_b}},         spawn, {.v = (const char *[]){"toggleblur", NULL}}}),
     &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_d}},         spawn, {.v = (const char *[]){"xdrag", NULL}}}),
