@@ -1,4 +1,4 @@
-/* [ dwm/config.h ] [ last update: 2025-02-05 07:15:28 EST ]
+/* [ dwm/config.h ] [ last update: 2025-04-13 22:23:36 EDT ]
  *         __       _
  *    ___ / _|   __| |_      ___ __ ___
  *   / __| |_   / _` \ \ /\ / / '_ ` _ \
@@ -9,6 +9,8 @@
 #define TERMINAL "st"
 #define TERMCLASS "St"
 #define BROWSER "qutebrowser"
+#define EMACS "emacsclient"
+#define EMACSCLASS "Emacs"
 
 /*     Appearance      */
 static unsigned int borderpx =  1;   /* border pixel of windows */
@@ -22,26 +24,30 @@ static int swallowfloating = 0; /* 1 means swallow floating windows by default *
 static int smartgaps       = 0; /* 1 means no outer gap when there is only one window */
 
 static int showbar = 1;       /* 0 means no bar */
-static int topbar  = 1;       /* 0 means bottom bar */
+static int topbar  = 0;       /* 0 means bottom bar */
 
-static const int vertpad =  0; /* vertical padding of bar */
-static const int sidepad =  0; /* horizontal padding of bar */
-static const int user_bh = 48; /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
+static const int vertpad = 0; /* vertical padding of bar */
+static const int sidepad = 0; /* horizontal padding of bar */
+static const int user_bh = 0; /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
+// static const int user_bh = 48; /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
+
 
 static const char *fonts[] = {
     "Iosevka Nerd Font:size=9:style=Regular:antialias=true:autohint=true",
     "Iosevka Nerd Font Mono:size=11:style=Regular:antialias=true:autohint=true",
+    "CaskaydiaCove Nerd Font:size=9:style=Book:antialias=true:autohint=true",
     "Iosevka Nerd Font Propo:size=10:style=Regular:antialias=true:autohint=true",
-    "Caskaydia Cove Nerd Font:size=9:style=Book:antialias=true:autohint=true",
+    "Iosevka Term:size=9:antialias=true:autohint=true",
     "FontAwesome:pixelsize=36:antialias=true:autohint=true",
-    "Iosevka Term:size=16:antialias=true:autohint=true",
-    "NotoColorEmoji:pixelsize=22:antialias=true:autohint=true",
+    "Noto Color Emoji:pixelsize=22:antialias=true:autohint=true",
     "Material Icons:pixelsize=36:antialias=true:autohint=true"
+    "Iosevka Comfy:size=9:style=Regular:antialias=true:autohint=true",
+    "Iosevka Comfy Duo:size=9:style=Regular:antialias=true:autohint=true",
 };
 
 static char normbgcolor[] = "#010101";
-static char normfgcolor[] = "#99968e";
-static char normbordercolor[] = "#0d0d0d";
+static char normfgcolor[] = "#f0f0f0";
+static char normbordercolor[] = "#00000e";
 
 static char selfgcolor[]     = "#bfbebf";
 static char selbgcolor[]     = "#010101";
@@ -71,45 +77,49 @@ typedef struct {
   const void *cmd;
 } Sp;
 
-const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "120x30", NULL};
-const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "monospace:size=50", "-g", "30x5", "-e", "bc",  "-lq", NULL};
-const char *spcmd3[] = {TERMINAL, "-n", "spvclp", "-f", "monospace:size=40", "-g", "100x30", "-e",  "vimclip",  NULL};
-const char *spcmd4[] = {TERMINAL, "-n", "spmpvq", "-f", "monospace:size=40", "-g", "100x30", "-e",  "mpvqls",   NULL};
-const char *spcmd5[] = {TERMINAL, "-n", "spmpvf", "-f", "monospace:size=45", "-g", "90x35", "-e",  "mpvqfzf",   NULL};
+
+const char *spcmd1[] = {TERMINAL, "-n", "spterm",  "-g", "100x25", NULL};
+const char *spcmd2[] = {TERMINAL, "-n", "spcalc",  "-f", "monospace:size=50", "-g", "30x3", "-e", "bc",  "-lq", NULL};
+const char *spcmd3[] = {TERMINAL, "-n", "spvclp",  "-f", "monospace:size=40", "-g", "100x30", "-e",  "vimclip", NULL};
+const char *spcmd4[] = {TERMINAL, "-n", "spmpvq",  "-f", "monospace:size=40", "-g", "100x30", "-e",  "mpvqls", NULL};
+const char *spcmd5[] = {TERMINAL, "-n", "spmpvf",  "-f", "monospace:size=45", "-g", "90x35", "-e",  "mpvqfzf", NULL};
+const char *spcmd6[] = {TERMINAL, "-n", "spemacs", "-g", "100x25", "-e", "xswal", "-t", "minibuffer", NULL};
 
 static Sp scratchpads[] = {
-    /* name         cmd  */
-    {"spterm",      spcmd1},
-    {"spcalc",      spcmd2},
-    {"spvclp",      spcmd3},
-    {"spmpvq",      spcmd4},
-    {"spmpvf",      spcmd5},
+    /* name           cmd  */
+    {"spterm",       spcmd1},
+    {"spcalc",       spcmd2},
+    {"spvclp",       spcmd3},
+    {"spmpvq",       spcmd4},
+    {"spmpvf",       spcmd5},
+    {"spemacs",      spcmd6},
 };
 
 /* static const char *tags[] = {"1", "2", "3", "4",  "5", "6", "7", "8 ", "9"}; */
-static const char *tags[] = {"", " ", " ",  " ", " ", "", " ", " ", ""};
+static const char *tags[] = {"", " ", " ",  " ", " ", "λ", " ", " ", ""};
 
 static const Rule rules[] = {
-    /* class          instance     title          tags mask  isfloating  fopacity unfopacity isterminal  noswallow  monitor */
-    {"Gimp",          NULL,        NULL,           1 << 4,     0,          1,             0,       1,          0,          -1},
-    {"Blender",       NULL,        NULL,           1 << 4,     0,          1,          0.95,       0,          0,          -1},
-    {"firefox",       NULL,        NULL,           1 << 2,     0,          1,          0.95,       0,          0,          -1},
-    {"brave-browser", NULL,        NULL,           1 << 9,     0,          1,          0.95,       0,          0,          -1},
-    {"chromium",      NULL,        NULL,           1 << 6,     0,          1,          0.95,       0,          0,          -1},
-    {"surf",          NULL,        NULL,           1 << 2,     0,          1,          0.95,       0,          0,          -1},
-    {"obs",           NULL,        NULL,           1 << 6,     0,          1,             1,       0,          0,          -1},
-    {"qutebrowser",   NULL,        NULL,           0,          0,          1,          0.95,       0,          0,          -1},
-    {"zathura",       NULL,        NULL,           0,          0,       0.90,          0.80,       0,          0,          -1},
-    {TERMCLASS,       "neomutt",   NULL,           1 << 6,     0,          1,           0.9,       1,          1,          -1},
-    {TERMCLASS,       NULL,        NULL,           0,          0,          1,             0,       1,          0,          -1},
-    {TERMCLASS,       "bg",        NULL,           1 << 7,     0,          1,             0,       0,          0,          -1},
-    {TERMCLASS,       "floatterm", NULL,           0,          1,          1,             0,       0,          0,          -1},
-    {TERMCLASS,       "spterm",    NULL,           SPTAG(0),   1,          1,             0,       0,          0,          -1},
-    {TERMCLASS,       "spcalc",    NULL,           SPTAG(1),   1,          1,             0,       0,          0,          -1},
-    {TERMCLASS,       "spvclip",   NULL,           SPTAG(2),   1,          1,             0,       1,          1,          -1},
-    {TERMCLASS,       "spmpvq",    NULL,           SPTAG(3),   1,          1,             0,       1,          1,          -1},
-    {TERMCLASS,       "spmpvf",    NULL,           SPTAG(4),   1,          1,             0,       1,          1,          -1},
-    {NULL,            NULL,        "Event Tester", 0,          0,          0,             1,       0,          0,          -1},
+    /* class          instance      title          tags mask  isfloating  fopacity unfopacity isterminal  noswallow  monitor */
+    {"Gimp",          NULL,         NULL,           1 << 4,     0,          1,             0,       1,          0,          -1},
+    {"Blender",       NULL,         NULL,           1 << 4,     0,          1,          0.95,       0,          0,          -1},
+    {"firefox",       NULL,         NULL,           1 << 2,     0,          1,          0.95,       0,          0,          -1},
+    {"brave-browser", NULL,         NULL,           1 << 9,     0,          1,          0.95,       0,          0,          -1},
+    {"chromium",      NULL,         NULL,           1 << 6,     0,          1,          0.95,       0,          0,          -1},
+    {"surf",          NULL,         NULL,           1 << 2,     0,          1,          0.95,       0,          0,          -1},
+    {"obs",           NULL,         NULL,           1 << 6,     0,          1,             1,       0,          0,          -1},
+    {"qutebrowser",   NULL,         NULL,           0,          0,          1,          0.95,       0,          0,          -1},
+    {"Zathura",       NULL,         NULL,           1 << 3,     0,        0.8,           0.7,       0,          0,          -1},
+    {TERMCLASS,       "neomutt",    NULL,           1 << 6,     0,          1,           0.9,       1,          1,          -1},
+    {TERMCLASS,       NULL,         NULL,           0,          0,          1,             0,       1,          0,          -1},
+    {TERMCLASS,       "bg",         NULL,           1 << 7,     0,          1,             0,       0,          0,          -1},
+    {TERMCLASS,       "floatterm",  NULL,           0,          1,          1,             0,       0,          0,          -1},
+    {TERMCLASS,       "spterm",     NULL,           SPTAG(0),   1,          1,             0,       0,          0,          -1},
+    {TERMCLASS,       "spcalc",     NULL,           SPTAG(1),   1,          1,             0,       0,          0,          -1},
+    {TERMCLASS,       "spvclip",    NULL,           SPTAG(2),   1,          1,             0,       1,          1,          -1},
+    {TERMCLASS,       "spmpvq",     NULL,           SPTAG(3),   1,          1,             0,       1,          1,          -1},
+    {TERMCLASS,       "spmpvf",     NULL,           SPTAG(4),   1,          1,             0,       1,          1,          -1},
+    {TERMCLASS,       "spemacs",    NULL,           SPTAG(5),   1,          1,             0,       1,          0,          -1},
+    {NULL,            NULL,         "Event Tester", 0,          0,          0,             1,       0,          0,          -1},
 };
 
 /* dynamic window swallowing */
@@ -120,10 +130,11 @@ static const char swalsymbol[]    = "👅";
 /*  layouts hints */
 static float mfact = 0.50;           /* factor of master area size [0.05..0.95] */
 static int nmaster = 1;              /* number of clients in master area */
-static int resizehints = 0;          /* 1 means respect size hints in tiled resizals */
+static int resizehints = 1;          /* 1 means respect size hints in tiled resizals */
+
 static const int lockfullscreen = 0; /* 1 will force focus on the fullscreen window */
 
-#define FORCE_VSPLIT 1  /* nrowgrid layout: force two clients to always split vertically */
+#define FORCE_VSPLIT 0  /* nrowgrid layout: force two clients to always split vertically */
 #include "vanitygaps.c"
 
 static const Layout layouts[] = {
@@ -171,6 +182,7 @@ static const Layout layouts[] = {
 
 /* Declared Commands */
 static const char *termcmd[] = { TERMINAL, NULL };
+static const char *emacsc[] = { EMACS, "-c", "--alternate-editor=",  "--socket-name=/run/user/1000/emacs/server", NULL};
 
 /* Xresources preferences to load at startup */
 ResourcePref resources[] = {
@@ -210,32 +222,40 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{MODKEY | ShiftMask,               XK_0}},           tag,           {.ui = ~0}}),
 
     &((Keychord){1, {{MODKEY,                           XK_grave}},       togglescratch, {.ui = 0}}),
-    &((Keychord){1, {{Mod1Mask,                     XK_backslash}},       togglescratch, {.ui = 0}}),
+    &((Keychord){1, {{MODKEY,                       XK_backslash}},       togglescratch, {.ui = 0}}),
     &((Keychord){1, {{MODKEY|ShiftMask|ControlMask,         XK_q}},       quit,                {0}}),
     &((Keychord){1, {{MODKEY,                             XK_Tab}},       view,                {0}}),
     &((Keychord){1, {{Mod1Mask,                           XK_Tab}},       view,                {0}}),
     &((Keychord){1, {{MODKEY,                               XK_q}},       killclient,          {0}}),
 
-    &((Keychord){0, {{MODKEY|ShiftMask,                 XK_Escape}},      spawn,         {.v = termcmd}}),
+    &((Keychord){1, {{MODKEY|ShiftMask,                 XK_Escape}},      spawn,         {.v = termcmd}}),
     &((Keychord){1, {{MODKEY|ShiftMask,                 XK_q}},           spawn,         {.v = (const char *[]){"wmreup", NULL}}}),
     &((Keychord){1, {{MODKEY|ShiftMask,                 XK_grave}},       spawn,         {.v = (const char *[]){"dmenuunicode", NULL}}}),
     &((Keychord){1, {{MODKEY,                           XK_BackSpace}},   spawn,         {.v = (const char *[]){"sysact",    NULL}}}),
-    &((Keychord){1, {{MODKEY | ShiftMask,               XK_BackSpace}},   spawn,         {.v = (const char *[]){"sysact",    NULL}}}),
+    &((Keychord){1, {{MODKEY|ShiftMask,                 XK_BackSpace}},   spawn,         {.v = (const char *[]){"sysact",    NULL}}}),
     &((Keychord){1, {{MODKEY|ControlMask,               XK_space}},       spawn,         {.v = (const char *[]){"piper-tgpt", NULL}}}),
     &((Keychord){1, {{MODKEY,                           XK_space}},       spawn,         {.v = (const char *[]){"kb-toggle", NULL}}}),
-    &((Keychord){1, {{MODKEY | ShiftMask,               XK_w}},           spawn,         {.v = (const char *[]){TERMINAL, "-e", "sudo", "nmtui", NULL}}}),
+    &((Keychord){1, {{MODKEY|ControlMask|ShiftMask,     XK_w}},           spawn,         {.v = (const char *[]){TERMINAL, "-e", "sudo", "nmtui", NULL}}}),
     &((Keychord){1, {{MODKEY,                           XK_r}},           spawn,         {.v = (const char *[]){TERMINAL, "-e", "lfub", NULL}}}),
-    &((Keychord){1, {{MODKEY | ShiftMask,               XK_r}},           spawn,         {.v = (const char *[]){TERMINAL, "-e", "htop", NULL}}}),
+    &((Keychord){1, {{MODKEY|ShiftMask,                 XK_r}},           spawn,         {.v = (const char *[]){TERMINAL, "-e", "htop", NULL}}}),
+    &((Keychord){1, {{MODKEY|ControlMask|ShiftMask,     XK_F12}},         spawn,         {.v = (const char *[]){"~/.local/keys/x2xdg3", NULL}}}),   /* Ctrl+Shift+F12 */
+
+    /* Emacs Frames */
+    &((Keychord){1, {{MODKEY|ShiftMask,                XK_e}},           spawn,          SHCMD("emacsclient -cn --alternate-editor= --socket-name=/run/user/1000/emacs/server")}),
+    &((Keychord){1, {{MODKEY|ControlMask,              XK_e}},           spawn,          {.v = emacsc}}),
+    &((Keychord){1, {{MODKEY|ShiftMask|ControlMask,    XK_e}},           spawn,          SHCMD("emacs -f \"((visibility . nil))\" -e \"(cf/emacs-run-launcher)\"")}),
+    &((Keychord){1, {{MODKEY,                          XK_e}},   togglescratch,          {.ui = 5}}),
+    /* &((Keychord){1, {{ControlMask|Mod1Mask, XK_e}},      spawn,  {.v = (const char *[]){"spwnedit", NULL}}}), */
 
     /* WirePlumber Volume Controls */
-    &((Keychord){1, {{MODKEY,                           XK_minus}},       spawn,         SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-; kill -44 $(pidof dwmblocks)")}),
-    &((Keychord){1, {{MODKEY | ShiftMask,               XK_minus}},       spawn,         SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 15%-; kill -44 $(pidof dwmblocks)")}),
-    &((Keychord){1, {{MODKEY,                           XK_equal}},       spawn,         SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+; kill -44 $(pidof dwmblocks)")}),
-    &((Keychord){1, {{MODKEY | ShiftMask,               XK_equal}},       spawn,         SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 15%+; kill -44 $(pidof dwmblocks)")}),
+    &((Keychord){1, {{MODKEY,                          XK_minus}},       spawn,         SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-; kill -44 $(pidof dwmblocks)")}),
+    &((Keychord){1, {{MODKEY|ShiftMask,                XK_minus}},       spawn,         SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 15%-; kill -44 $(pidof dwmblocks)")}),
+    &((Keychord){1, {{MODKEY,                          XK_equal}},       spawn,         SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+; kill -44 $(pidof dwmblocks)")}),
+    &((Keychord){1, {{MODKEY|ShiftMask,                XK_equal}},       spawn,         SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 15%+; kill -44 $(pidof dwmblocks)")}),
 
     /* Contacts & Mail Apps */
-    &((Keychord){2, {{MODKEY, XK_e},{0, XK_e}},                           spawn,         SHCMD(TERMINAL " -e neomutt ; pkill -RTMIN+12 dwmblocks; rmdir ~/.abook 2>/dev/null")}),
-    &((Keychord){2, {{MODKEY, XK_e},{ShiftMask, XK_e}},                   spawn,         SHCMD(TERMINAL " -e abook -C ~/.config/abook/abookrc --datafile ~/.config/abook/addressbook")}),
+    /* &((Keychord){2, {{MODKEY, XK_e},{0, XK_e}},                           spawn,         SHCMD(TERMINAL " -e neomutt ; pkill -RTMIN+12 dwmblocks; rmdir ~/.abook 2>/dev/null")}), */
+    /* &((Keychord){2, {{MODKEY, XK_e},{ShiftMask, XK_e}},                   spawn,         SHCMD(TERMINAL " -e abook -C ~/.config/abook/abookrc --datafile ~/.config/abook/addressbook")}), */
 
     /* <Super> + <[o]|[O]> Decrement/Increment focused window master factor  */
     &((Keychord){1, {{MODKEY,             XK_o}},      incnmaster,    {.i = +1}}),
@@ -257,16 +277,17 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{MODKEY|ControlMask, XK_o}},      setlayout,     {.v = &layouts[12]}}), /* gaplessgrid */
     &((Keychord){1, {{MODKEY|ShiftMask,   XK_f}},      setlayout,     {.v = &layouts[13]}}), /* floating behaviour */
 
-    &((Keychord){2, {{MODKEY, XK_backslash}, {0, XK_backslash}},           spawn,  {.v = (const char *[]){"bmpaste", NULL}}}),
-    &((Keychord){2, {{MODKEY|ShiftMask, XK_backslash}, {0, XK_backslash}}, spawn,  {.v = (const char *[]){"bmcommand", NULL}}}),
+
+    &((Keychord){2, {{MODKEY, XK_backslash}, {0, XK_b}},                   spawn,  {.v = (const char *[]){"bmpaste", NULL}}}),
+    &((Keychord){2, {{MODKEY|ShiftMask, XK_backslash}, {0, XK_b}},         spawn,  {.v = (const char *[]){"bmcommand", NULL}}}),
+    &((Keychord){2, {{MODKEY|ShiftMask, XK_backslash}, {0, XK_v}},         spawn,  {.v = (const char *[]){"vscreen", NULL}}}),
+    &((Keychord){1, {{Mod1Mask|ShiftMask,  XK_p}},                         spawn,  {.v = (const char *[]){"xdotool", "click", "2", NULL}}}),
     &((Keychord){1, {{MODKEY|ShiftMask, XK_Down}},                         spawn,  {.v = (const char *[]){"unswal", "1", NULL}}}),
-    &((Keychord){1, {{MODKEY|ControlMask, XK_w}},                          spawn,  {.v = (const char *[]){"camcast", NULL}}}),
-    &((Keychord){1, {{MODKEY,             XK_d}},                          spawn,  {.v = (const char *[]){"dmenu_run", NULL}}}),
-    &((Keychord){1, {{MODKEY|ShiftMask,   XK_d}},                          spawn,  {.v = (const char *[]){"passmenu", NULL}}}),
-    &((Keychord){1, {{MODKEY|ControlMask, XK_p}},                          spawn,  {.v = (const char *[]){"scrncast", NULL}}}),
-    &((Keychord){1, {{Mod1Mask|ShiftMask, XK_t}},                          spawn,  {.v = (const char *[]){"screenconf", NULL}}}),
-    &((Keychord){2, {{MODKEY, XK_backslash}, {0, XK_v}},                   spawn,  {.v = (const char *[]){"vscreen", NULL}}}),
-    &((Keychord){1, {{MODKEY|ShiftMask|ControlMask, XK_p}},                spawn,  {.v = (const char *[]){"dmenurecord", "kill", NULL}}}),
+    &((Keychord){1, {{MODKEY|ControlMask,  XK_w}},                         spawn,  {.v = (const char *[]){"camcast", NULL}}}),
+    &((Keychord){1, {{MODKEY,              XK_d}},                         spawn,  {.v = (const char *[]){"dmenu_run", NULL}}}),
+    &((Keychord){1, {{MODKEY|ShiftMask,    XK_d}},                         spawn,  {.v = (const char *[]){"passmenu", NULL}}}),
+    &((Keychord){1, {{MODKEY|ControlMask,  XK_p}},                         spawn,  {.v = (const char *[]){"scrncast", NULL}}}),
+    &((Keychord){1, {{MODKEY|ControlMask|ShiftMask, XK_Return}},           spawn,  {.v = (const char *[]){"dmenurecord", NULL}}}),
 
     /* toggle fullscreen toggles bar too */
     &((Keychord){1, {{MODKEY|ControlMask, XK_space}},          zoom,           {0}}),
@@ -277,14 +298,15 @@ static Keychord *keychords[] = {
     /* more toggles */
     &((Keychord){1, {{MODKEY,               XK_s}},            togglesticky,   {0}}),
     &((Keychord){1, {{MODKEY,               XK_a}},            togglegaps,     {0}}),
-    &((Keychord){1, {{MODKEY | ShiftMask,   XK_a}},            defaultgaps,    {0}}),
-    &((Keychord){1, {{MODKEY | ShiftMask,   XK_space}},        togglefloating, {0}}),
+    &((Keychord){1, {{MODKEY|ShiftMask,     XK_a}},            defaultgaps,    {0}}),
+    &((Keychord){1, {{MODKEY|ShiftMask,     XK_space}},        togglefloating, {0}}),
 
-    &((Keychord){1, {{MODKEY | ShiftMask,   XK_Return}},       togglescratch,  {.ui = 0}}),
-    &((Keychord){1, {{MODKEY,               XK_apostrophe}},   togglescratch,  {.ui = 1}}),
-    &((Keychord){1, {{Mod1Mask | ShiftMask, XK_Return}},       togglescratch,  {.ui = 2}}),
+    &((Keychord){1, {{MODKEY,               XK_Return}},       spawn,          {.v = termcmd}}),
 
-    &((Keychord){1, {{MODKEY, XK_Return}},                     spawn,          {.v = termcmd}}),
+    /* Scratch Pads */
+    &((Keychord){1, {{MODKEY|ShiftMask,     XK_Return}},       togglescratch,  {.ui = 0}}),
+    &((Keychord){1, {{MODKEY,               XK_apostrophe}},   togglescratch,  {.ui = 5}}),
+    &((Keychord){1, {{MODKEY|ShiftMask,     XK_c}},            togglescratch,  {.ui = 1}}),
 
     /* mfacts resizing */
     &((Keychord){1, {{MODKEY, XK_h}},                          setmfact,       {.f = -0.05}}),
@@ -300,10 +322,10 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{MODKEY,               XK_x}},            incrgaps,       {.i = +1}}),
 
     /* Workspaces shifting */
-    &((Keychord){1, {{MODKEY,               XK_g}},            shiftview,      {.i = -1}}),
-    &((Keychord){1, {{MODKEY | ShiftMask,   XK_g}},            shifttag,       {.i = -1}}),
-    &((Keychord){1, {{MODKEY,               XK_semicolon}},    shiftview,      {.i = 1}}),
-    &((Keychord){1, {{MODKEY | ShiftMask,   XK_semicolon}},    shifttag,       {.i = 1}}),
+    &((Keychord){1, {{MODKEY,                     XK_g}},    shiftview,      {.i = -1}}),
+    &((Keychord){1, {{MODKEY|ShiftMask,           XK_g}},    shifttag,       {.i = -1}}),
+    &((Keychord){1, {{MODKEY,             XK_semicolon}},    shiftview,       {.i = 1}}),
+    &((Keychord){1, {{MODKEY|ShiftMask,   XK_semicolon}},    shifttag,        {.i = 1}}),
 
     /* Focus and unfocused focused window transparency kb control
      * also bound to <[super]|[super+shift]> + <MouseScroll [Up]|[Down]> */
@@ -332,32 +354,45 @@ static Keychord *keychords[] = {
     /* &((Keychord){2, {{MODKEY, XK_w}, {0, XK_h}},               spawn,         SHCMD("dsurfraw -d -e wikipedia luakit")}), */
 
     /* Web browsers:        <Alt+b>  +    <KEY>                launches       select browsers */
-    &((Keychord){2, {{Mod1Mask, XK_b}, {0, XK_s}},             spawn,         SHCMD("dsurfraw -d")}),  /* dmenu searchbar surfraw wrapper */
-    &((Keychord){2, {{Mod1Mask, XK_b}, {0, XK_q}},             spawn,         SHCMD("qutepriv")}),
-    &((Keychord){2, {{Mod1Mask, XK_b}, {0, XK_f}},             spawn,         SHCMD("firefox")}),
-    &((Keychord){2, {{Mod1Mask, XK_b}, {0, XK_c}},             spawn,         SHCMD("chromium")}),
-    &((Keychord){2, {{Mod1Mask, XK_b}, {0, XK_b}},             spawn,         SHCMD("brave")}),
-    &((Keychord){2, {{Mod1Mask, XK_b}, {0, XK_l}},             spawn,         SHCMD("librewolf")}),
-    &((Keychord){2, {{Mod1Mask, XK_b}, {0, XK_p}},             spawn,         SHCMD("dwmpatches")}),
-    &((Keychord){2, {{Mod1Mask, XK_a}, {0, XK_r}},             spawn,         SHCMD("rssadd \"$(xclip -sel clipboard -o)\" || rssadd \"$(xclip -sel primary -o)\"")}),
+    &((Keychord){2, {{MODKEY, XK_b}, {0, XK_d}},             spawn,         SHCMD("dsurfraw -d")}),  /* dmenu searchbar surfraw wrapper */
+    &((Keychord){2, {{MODKEY, XK_b}, {0, XK_q}},             spawn,         SHCMD("qutebrowser --target private-window")}),
+    &((Keychord){2, {{MODKEY, XK_b}, {0, XK_f}},             spawn,         SHCMD("firefox")}),
+    &((Keychord){2, {{MODKEY, XK_b}, {0, XK_c}},             spawn,         SHCMD("chromium")}),
+    &((Keychord){2, {{MODKEY, XK_b}, {0, XK_b}},             spawn,         SHCMD("brave")}),
+    &((Keychord){2, {{MODKEY, XK_b}, {0, XK_l}},             spawn,         SHCMD("librewolf")}),
+    &((Keychord){2, {{MODKEY, XK_b}, {0, XK_p}},             spawn,         SHCMD("dwmpatches")}),
+    &((Keychord){2, {{MODKEY, XK_a}, {0, XK_r}},             spawn,         SHCMD("rssadd \"$(xclip -sel clipboard -o)\" || rssadd \"$(xclip -sel primary -o)\"")}),
+    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_q}},             spawn,         SHCMD("qutebrowser")}),
+    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_f}},             spawn,         SHCMD("firefox")}),
+    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_c}},             spawn,         SHCMD("chromium")}),
+    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_b}},             spawn,         SHCMD("brave")}),
 
-    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_q}},               spawn,         SHCMD("qutepriv")}),
-    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_f}},               spawn,         SHCMD("firefox")}),
-    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_c}},               spawn,         SHCMD("chromium")}),
-    &((Keychord){2, {{MODKEY, XK_w}, {0, XK_b}},               spawn,         SHCMD("brave")}),
+    /* Super + Control + Shift + XK_? */
+    &((Keychord){1, {{MODKEY|ControlMask|ShiftMask, XK_t}},       spawn, {.v = (const char *[]){"screenconf", NULL}}}),
+    &((Keychord){1, {{MODKEY|ControlMask|ShiftMask, XK_p}},       spawn, {.v = (const char *[]){"dmenurecord", "kill", NULL}}}),
+    &((Keychord){1, {{MODKEY|ControlMask|ShiftMask, XK_m}},       spawn, {.v = (const char *[]){"ncmpcpp", NULL}}}),
+    &((Keychord){1, {{MODKEY|ControlMask|ShiftMask, XK_k}},       spawn, {.v = (const char *[]){"xmouse", NULL}}}),
+    &((Keychord){1, {{MODKEY|ControlMask|ShiftMask, XK_h}},       spawn, {.v = (const char *[]){"yankmon", "1", NULL}}}),
+    &((Keychord){1, {{MODKEY|ControlMask|ShiftMask, XK_l}},       spawn, {.v = (const char *[]){"linkclip", NULL}}}),
+    &((Keychord){1, {{MODKEY|ControlMask|ShiftMask, XK_y}},       spawn, {.v = (const char *[]){"wezterm", "-e", "yazi", "~/Videos/yt", NULL}}}),
+    &((Keychord){1, {{MODKEY|ControlMask|ShiftMask, XK_e}},       spawn, {.v = (const char *[]){"sd", NULL}}}),
+    &((Keychord){1, {{MODKEY|ControlMask|ShiftMask, XK_b}},       spawn, {.v = (const char *[]){"toggleblur", NULL}}}),
+    &((Keychord){1, {{MODKEY|ControlMask|ShiftMask, XK_grave}},   spawn, {.v = (const char *[]){"mpc-voice-search", NULL}}}),
+    /* &((Keychord){1, {{MODKEY|ControlMask|ShiftMask, XK_d}},       spawn, {.v = (const char *[]){"xdrag", NULL}}}), */
+    /* &((Keychord){1, {{MODKEY|ControlMask|ShiftMask, XK_t}},       spawn, {.v = (const char *[]){"dndmpv", NULL}}}), */
 
     /* Media controls */
-    &((Keychord){1, {{MODKEY|ControlMask,        XK_m}},        spawn,     SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)")}),
-    &((Keychord){2, {{MODKEY, XK_m},         {0, XK_m}},        spawn,     {.v = (const char *[]){TERMINAL, "-e", "ncmpcpp", NULL}}}),
-    &((Keychord){1, {{ControlMask,           XK_comma}},        spawn,     {.v = (const char *[]){"mpc", "prev", NULL}}}),
-    &((Keychord){1, {{ControlMask|ShiftMask, XK_comma}},        spawn,     {.v = (const char *[]){"mpc", "seek", "0%", NULL}}}),
-    &((Keychord){1, {{ControlMask,           XK_period}},       spawn,     {.v = (const char *[]){"mpc", "next", NULL}}}),
-    &((Keychord){1, {{ControlMask|ShiftMask, XK_period}},       spawn,     {.v = (const char *[]){"mpc", "repeat", NULL}}}),
+    &((Keychord){1, {{MODKEY|ShiftMask,          XK_m}},        spawn,     SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)")}),
+
+    /* &((Keychord){1, {{MODKEY|ControlMask,           XK_comma}},        spawn,     {.v = (const char *[]){"mpc", "prev", NULL}}}), */
+    /* &((Keychord){1, {{MODKEY|ControlMask|ShiftMask, XK_comma}},        spawn,     {.v = (const char *[]){"mpc", "seek", "0%", NULL}}}), */
+    /* &((Keychord){1, {{MODKEY|ControlMask|ShiftMask,          XK_period}},       spawn,     {.v = (const char *[]){"mpc", "next", NULL}}}), */
+    /* &((Keychord){1, {{MODKEY|ShiftMask|ControlMask, XK_period}},       spawn,     {.v = (const char *[]){"mpc", "repeat", NULL}}}), */
     &((Keychord){1, {{MODKEY,                XK_p}},            spawn,     {.v = (const char *[]){"mpc", "toggle", NULL}}}),
     &((Keychord){1, {{MODKEY,                XK_bracketleft}},  spawn,     {.v = (const char *[]){"mpc", "seek", "-10", NULL}}}),
-    &((Keychord){1, {{MODKEY | ShiftMask,    XK_bracketleft}},  spawn,     {.v = (const char *[]){"mpc", "seek", "-60", NULL}}}),
+    /* &((Keychord){1, {{MODKEY | ShiftMask,    XK_bracketleft}},  spawn,     {.v = (const char *[]){"mpc", "seek", "-60", NULL}}}), */
     &((Keychord){1, {{MODKEY,                XK_bracketright}}, spawn,     {.v = (const char *[]){"mpc", "seek", "+10", NULL}}}),
-    &((Keychord){1, {{MODKEY | ShiftMask,    XK_bracketright}}, spawn,     {.v = (const char *[]){"mpc", "seek", "+60", NULL}}}),
+    /* &((Keychord){1, {{MODKEY | ShiftMask,    XK_bracketright}}, spawn,     {.v = (const char *[]){"mpc", "seek", "+60", NULL}}}), */
 
     /* Super + [left|right] to switch monitor focus; Super + Shift + [left|right] to send windows to other monitor */
     &((Keychord){1, {{MODKEY,               XK_Left}},         focusmon,   {.i = +1}}),
@@ -372,30 +407,35 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{MODKEY | ShiftMask,   XK_comma}},        tagmon,     {.i = +1}}),
 
     /* <[Alt]|[Alt+Shift]> + <[u]|[i]> monitor switch|shift home row altbinds */
-    &((Keychord){1, {{Mod1Mask,             XK_i}},            focusmon,   {.i = -1}}),
-    &((Keychord){1, {{Mod1Mask,             XK_u}},            focusmon,   {.i = +1}}),
-    &((Keychord){1, {{Mod1Mask | ShiftMask, XK_i}},            tagmon,     {.i = -1}}),
-    &((Keychord){1, {{Mod1Mask | ShiftMask, XK_u}},            tagmon,     {.i = +1}}),
+    /* &((Keychord){1, {{MODKEY|Mod1Mask,             XK_i}},            focusmon,   {.i = -1}}), */
+    /* &((Keychord){1, {{MODKEY|Mod1Mask,             XK_u}},            focusmon,   {.i = +1}}), */
+    /* &((Keychord){1, {{MODKEY|Mod1Mask|ShiftMask,   XK_i}},            tagmon,     {.i = -1}}), */
+    /* &((Keychord){1, {{MODKEY|Mod1Mask|ShiftMask,   XK_u}},            tagmon,     {.i = +1}}), */
 
     /* Moving windows up and down the stack */
-    &((Keychord){1, {{MODKEY,               XK_Page_Up}},      shiftview,  {.i = -1}}),
-    &((Keychord){1, {{MODKEY | ShiftMask,   XK_Page_Up}},      shifttag,   {.i = -1}}),
-    &((Keychord){1, {{MODKEY,               XK_Page_Down}},    shiftview,  {.i = +1}}),
-    &((Keychord){1, {{MODKEY | ShiftMask,   XK_Page_Down}},    shifttag,   {.i = +1}}),
+    &((Keychord){1, {{MODKEY,             XK_Page_Up}},      shiftview,  {.i = -1}}),
+    &((Keychord){1, {{MODKEY|ShiftMask,   XK_Page_Up}},      shifttag,   {.i = -1}}),
+    &((Keychord){1, {{MODKEY,             XK_Page_Down}},    shiftview,  {.i = +1}}),
+    &((Keychord){1, {{MODKEY|ShiftMask,   XK_Page_Down}},    shifttag,   {.i = +1}}),
 
     /* Super + Control + [left|right|up|down] to rotate monitor view */
-    &((Keychord){1, {{ MODKEY | ControlMask,  XK_Right}},       spawn,     SHCMD("xrandr --output eDP --rotate left && walfeh -reset")}),
-    &((Keychord){1, {{ MODKEY | ControlMask,  XK_Left}},        spawn,     SHCMD("xrandr --output eDP --rotate right && walfeh -reset")}),
-    &((Keychord){1, {{ MODKEY | ControlMask,  XK_Up}},          spawn,     SHCMD("xrandr --output eDP --rotate inverted && walfeh -reset")}),
-    &((Keychord){1, {{ MODKEY | ControlMask,  XK_Down}},        spawn,     SHCMD("xrandr --output eDP --rotate normal && walfeh -reset")}),
+    &((Keychord){1, {{MODKEY|ControlMask,  XK_Right}},       spawn,     SHCMD("xrandr --output eDP --rotate left && walfeh -reset")}),
+    &((Keychord){1, {{MODKEY|ControlMask,  XK_Left}},        spawn,     SHCMD("xrandr --output eDP --rotate right && walfeh -reset")}),
+    &((Keychord){1, {{MODKEY|ControlMask,  XK_Up}},          spawn,     SHCMD("xrandr --output eDP --rotate inverted && walfeh -reset")}),
+    &((Keychord){1, {{MODKEY|ControlMask,  XK_Down}},        spawn,     SHCMD("xrandr --output eDP --rotate normal && walfeh -reset")}),
 
-    /* Délégation de l'avaleur à l'avalé des avalés */
+    /* Dynamic Swallows */
+    // &((Keychord){2, {{MODKEY, XK_Left},   {0, XK_Left}},       spawn,    {.v = (const char *[]){"swallow_left",  NULL}}}),
+    // &((Keychord){2, {{MODKEY, XK_Down},   {0, XK_Down}},       spawn,    {.v = (const char *[]){"swallow_under", NULL}}}),
+    &((Keychord){2, {{MODKEY, XK_Up},       {0, XK_Up}},       spawn,    {.v = (const char *[]){"swallow_above", NULL}}}),
+    &((Keychord){1, {{MODKEY, XK_Right}},                      spawn,    {.v = (const char *[]){"swallow_right", NULL}}}),
+
     &((Keychord){1, {{MODKEY|ShiftMask,   XK_apostrophe}},      swalstopsel,     {0}}),
-    &((Keychord){2, {{MODKEY, XK_Left},     {0, XK_Left}},      swalstopsel,     {0}}),
-    &((Keychord){2, {{MODKEY, XK_Right},   {0, XK_Right}},      swalstopsel,     {0}}),
+    &((Keychord){1, {{MODKEY, XK_Left}},       swalstopsel,     {0}}),
+    &((Keychord){1, {{MODKEY, XK_Up}},         swalstopsel,     {0}}),
 
-    &((Keychord){2, {{MODKEY, XK_Up},         {0, XK_Up}},      spawn,           {.v = (const char *[]){"unswal", "1", NULL}}}),
-    &((Keychord){2, {{MODKEY, XK_Down},     {0, XK_Down}},      spawn,           {.v = (const char *[]){"unswal", "1", NULL}}}),
+    // &((Keychord){1, {{MODKEY, XK_Up}},                          spawn,  {.v = (const char *[]){"unswal", "1", NULL}}}),
+    &((Keychord){1, {{MODKEY, XK_Down}},                        spawn,  {.v = (const char *[]){"swallow_under", NULL}}}),
 
     /* Alt + [h|j|k|l] dynamic directional swallows */
     /* &((Keychord){2, {{Mod1Mask, XK_h}, {0, XK_h}},         spawn,    {.v = (const char *[]){"winLeft", NULL}}}), */
@@ -408,15 +448,10 @@ static Keychord *keychords[] = {
     /* &((Keychord){1, {{Mod1Mask, XK_Right}},                spawn,    {.v = (const char *[]){"winRight", NULL}}}), */
 
     /* Dynamic directional swallows */
-    &((Keychord){2, {{Mod1Mask, XK_h}, {0, XK_h}},         spawn,    {.v = (const char *[]){"swallow_left",  NULL}}}),
-    &((Keychord){2, {{Mod1Mask, XK_j}, {0, XK_j}},         spawn,    {.v = (const char *[]){"swallow_under", NULL}}}),
-    &((Keychord){2, {{Mod1Mask, XK_k}, {0, XK_k}},         spawn,    {.v = (const char *[]){"swallow_above", NULL}}}),
-    &((Keychord){2, {{Mod1Mask, XK_l}, {0, XK_l}},         spawn,    {.v = (const char *[]){"swallow_right", NULL}}}),
-
-    &((Keychord){1, {{Mod1Mask, XK_Left}},                 spawn,    {.v = (const char *[]){"swallow_left",  NULL}}}),
-    &((Keychord){1, {{Mod1Mask, XK_Down}},                 spawn,    {.v = (const char *[]){"swallow_under", NULL}}}),
-    &((Keychord){1, {{Mod1Mask, XK_Up}},                   spawn,    {.v = (const char *[]){"swallow_above", NULL}}}),
-    &((Keychord){1, {{Mod1Mask, XK_Right}},                spawn,    {.v = (const char *[]){"swallow_right", NULL}}}),
+    /* &((Keychord){2, {{Mod1Mask, XK_h}, {0, XK_h}},         spawn,    {.v = (const char *[]){"swallow_left",  NULL}}}), */
+    /* &((Keychord){2, {{Mod1Mask, XK_j}, {0, XK_j}},         spawn,    {.v = (const char *[]){"swallow_under", NULL}}}), */
+    /* &((Keychord){2, {{Mod1Mask, XK_k}, {0, XK_k}},         spawn,    {.v = (const char *[]){"swallow_above", NULL}}}), */
+    /* &((Keychord){2, {{Mod1Mask, XK_l}, {0, XK_l}},         spawn,    {.v = (const char *[]){"swallow_right", NULL}}}), */
 
     &((Keychord){2, {{MODKEY, XK_n}, {0, XK_n}},           spawn,    SHCMD(TERMINAL " -e newsboat; pkill -RTMIN+6 dwmblocks")}),
     &((Keychord){2, {{MODKEY, XK_c}, {0, XK_c}},           spawn,    SHCMD(TERMINAL " -e calcurse")}),
@@ -426,9 +461,9 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{MODKEY | ShiftMask, XK_Insert}},     spawn,    SHCMD("xdotool type --delay 50 \"$(grep -v '^#' ~/Documents/Notes/bmcmd | dmenu -i -l 50 | cut -d' ' -f2-)\"")}),
 
     /* Super + [F1-F12] scripts and utilities */
-    &((Keychord){1, {{MODKEY,               XK_F1}},       spawn,    SHCMD("playmuse")}),
+    &((Keychord){1, {{MODKEY|ShiftMask,    XK_F1}},        spawn,    SHCMD("playmuse")}),
     &((Keychord){2, {{MODKEY,XK_m}, {MODKEY,XK_m}},        spawn,    SHCMD(TERMINAL " -e ncmpcpp")}),
-    &((Keychord){1, {{MODKEY|ShiftMask,     XK_F1}},       spawn,    SHCMD("man -k . | dmenu -l 30 | awk '{print $1}' | xargs -r man -Tpdf | zathura -")}),
+    &((Keychord){1, {{MODKEY,               XK_F1}},       spawn,    SHCMD("man -k . | dmenu -l 30 | awk '{print $1}' | xargs -r man -Tpdf | zathura -")}),
     &((Keychord){1, {{MODKEY,               XK_F2}},       spawn,    {.v = (const char *[]){"readit", "-c", NULL}}}),
     &((Keychord){1, {{MODKEY|ShiftMask,     XK_F2}},       spawn,    {.v = (const char *[]){"tutorialvids", NULL}}}),
     &((Keychord){1, {{MODKEY,               XK_F3}},       spawn,    {.v = (const char *[]){"displayselect", NULL}}}),
@@ -451,7 +486,7 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{MODKEY, XK_Print}},                     spawn, {.v = (const char *[]){"dmenurecord", NULL}}}),
     &((Keychord){1, {{MODKEY|ShiftMask, XK_Print}},           spawn, {.v = (const char *[]){"dmenurecord", "kill", NULL}}}),
     &((Keychord){1, {{MODKEY, XK_Delete}},                    spawn, {.v = (const char *[]){"dmenurecord", "kill", NULL}}}),
-    &((Keychord){2, {{Mod1Mask, XK_s}, {0, XK_s}},            spawn, SHCMD("killall screenkey || screenkey -M -s small -M -g 669x1560+1620+0 --opacity 0.6 --bak-mode full --mods-mode emacs")}),
+    &((Keychord){2, {{MODKEY, XK_s}, {0, XK_s}},            spawn, SHCMD("killall screenkey || screenkey -M -s small -M -g 669x1560+1620+0 --opacity 0.6 --bak-mode full --mods-mode emacs")}),
     /* &((Keychord){1, {{MODKEY, XK_space}},                     spawn, SHCMD("win_icons_align")}), */
 
     /* XF86 media/function keys */
@@ -499,9 +534,9 @@ static Keychord *keychords[] = {
     /* &((Keychord){1, {{0, XK_F1}},                         spawn, {.v = (const char *[]){"linkhandler", NULL}}}), */
     /* &((Keychord){1, {{0, XK_F2}},                         spawn, {.v = (const char *[]){"pkill", "piper-tts", NULL}}}), */
     /* &((Keychord){1, {{0, XK_F3}},                         spawn, {.v = (const char *[]){"mpctl", NULL}}}), */
-    &((Keychord){1, {{0, XK_F4}},                         spawn, {.v = (const char *[]){"mpc", "prev", NULL}}}),
-    &((Keychord){1, {{0, XK_F5}},                         spawn, {.v = (const char *[]){"mpctl", NULL}}}),
-    &((Keychord){1, {{0, XK_F6}},                         spawn, {.v = (const char *[]){"mpc", "next", NULL}}}),
+    /* &((Keychord){1, {{0, XK_F4}},                         spawn, {.v = (const char *[]){"mpc", "prev", NULL}}}), */
+    /* &((Keychord){1, {{0, XK_F5}},                         spawn, {.v = (const char *[]){"mpctl", NULL}}}), */
+    /* &((Keychord){1, {{0, XK_F6}},                         spawn, {.v = (const char *[]){"mpc", "next", NULL}}}), */
     /* &((Keychord){2, {{0, XK_F7}},                         spawn, {.v = (const char *[]){"playmuse", NULL}}}), */
     /* &((Keychord){2, {{0, XK_F8}},                         spawn, {.v = (const char *[]){"mpc-voice-search", NULL}}}), */
     &((Keychord){1, {{0, XK_F9}},                         spawn, {.v = (const char *[]){"touchpad_toggle", NULL}}}),
@@ -527,10 +562,8 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{ControlMask, XK_F12}},              spawn,  {.v = (const char *[]){"xkill", NULL}}}),
     /* &((Keychord){1, {{ControlMask, XK_F11}},              spawn,  {.v = (const char *[]){"", "", NULL}}}), */
 
-    &((Keychord){1, {{ControlMask|ShiftMask, XK_e}},      spawn,  {.v = (const char *[]){"emacs", NULL}}}),
-
     &((Keychord){1, {{ControlMask|ShiftMask, XK_F1}},     spawn,  {.v = (const char *[]){"cliplink", NULL}}}),
-    &((Keychord){1, {{ControlMask|ShiftMask, XK_F2}},     spawn,  {.v = (const char *[]){"emacsclient", NULL}}}),
+    &((Keychord){1, {{ControlMask|ShiftMask, XK_F2}},     spawn,  {.v = (const char *[]){"emacsclient -cn --alternate-editor= --socket-name=/run/user/1000/emacs/server", NULL}}}),
     &((Keychord){1, {{ControlMask|ShiftMask, XK_F3}},     spawn,  {.v = (const char *[]){"mpvqfzf", "play", NULL}}}),
     &((Keychord){1, {{ControlMask|ShiftMask, XK_F4}},     spawn,  {.v = (const char *[]){"mpvq", "dnd", NULL}}}),
     &((Keychord){1, {{ControlMask|ShiftMask, XK_F5}},     spawn,  {.v = (const char *[]){"mpvqls", NULL}}}),
@@ -541,16 +574,6 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{ControlMask|ShiftMask, XK_F10}},    spawn,  {.v = (const char *[]){"vcn", "DisplayPort-2", "4", NULL}}}),
     &((Keychord){1, {{ControlMask|ShiftMask, XK_F11}},    spawn,  {.v = (const char *[]){"vcn", "eDP", "5", NULL}}}),
     &((Keychord){1, {{ControlMask|ShiftMask, XK_F12}},    spawn,  {.v = (const char *[]){"vcn", "DisplayPort-2", "6", NULL}}}),
-
-    &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_w}},         spawn, {.v = (const char *[]){"xmouse", NULL}}}),
-    &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_h}},         spawn, {.v = (const char *[]){"yankmon", "1", NULL}}}),
-    &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_l}},         spawn, {.v = (const char *[]){"linkclip", NULL}}}),
-    &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_y}},         spawn, {.v = (const char *[]){"wezterm", "-e", "yazi", "~/Videos/yt", NULL}}}),
-    &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_e}},         spawn, {.v = (const char *[]){"sd", NULL}}}),
-    &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_b}},         spawn, {.v = (const char *[]){"toggleblur", NULL}}}),
-    &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_d}},         spawn, {.v = (const char *[]){"xdrag", NULL}}}),
-    &((Keychord){2, {{Mod1Mask, XK_w},{0, XK_t}},         spawn, {.v = (const char *[]){"dndmpv", NULL}}}),
-    &((Keychord){2, {{Mod1Mask, XK_grave},{Mod1Mask, XK_grave}},   spawn, {.v = (const char *[]){"mpc-voice-search", NULL}}}),
 
     /* Single       Ctrl + Keypad [0-9]                          script testenv */
     &((Keychord){1, {{ControlMask, XK_KP_Insert}},        spawn, SHCMD("numpad0")}),
@@ -564,11 +587,14 @@ static Keychord *keychords[] = {
     &((Keychord){1, {{ControlMask, XK_KP_Up}},            spawn, SHCMD("numpad8")}),
     &((Keychord){1, {{ControlMask, XK_KP_Page_Up}},       spawn, SHCMD("numpad9")}),
 
-    &((Keychord){2, {{MODKEY,XK_x}, {0, XK_c}},           spawn, SHCMD("xclip -selection primary -o | xclip -selection clipboard")}),
-    &((Keychord){2, {{MODKEY,XK_x}, {0, XK_a}},           spawn, SHCMD("xclip -selection clipboard -o | xclip -selection primary")}),
-    &((Keychord){2, {{MODKEY,XK_x}, {0, XK_x}},           spawn, SHCMD("xsel --exchange")}),
+    &((Keychord){2, {{MODKEY, XK_x}, {0, XK_c}},          spawn, SHCMD("xclip -sel prim -o | xclip -in -sel clip")}),
+    &((Keychord){2, {{MODKEY, XK_x}, {0, XK_a}},          spawn, SHCMD("xclip -sel clip -o | xclip -in -sel prim")}),
+    &((Keychord){2, {{MODKEY, XK_x}, {0, XK_x}},          spawn, SHCMD("xclip -sel clip -o | xsel -i")}),
+    &((Keychord){2, {{MODKEY, XK_x}, {0, XK_x}},          spawn, SHCMD("xsel -xk")}),
+    &((Keychord){2, {{MODKEY, XK_x}, {0, XK_d}},          spawn, SHCMD("xsel -d")}),
 
-    /* Tests de manipulation par registres */
+
+    /* Tests de manipulations par XSelection */
     /* &((Keychord){2, {{Mod1Mask,XK_c}, {0, XK_r}},              spawn,          SHCMD("echo \"$(xclip -o)\" >> ~/Notes/clipregisters/r")}), */
     /* &((Keychord){2, {{Mod1Mask,XK_c}, {ControlMask, XK_r}},    spawn,          SHCMD("echo \"\" > ~/Notes/clipregisters/r")}), */
     /* &((Keychord){2, {{Mod1Mask,XK_c}, {0, XK_a}},              spawn,          SHCMD("echo \"$(xclip -o)\" > ~/Notes/clipregisters/a")}), */
@@ -615,8 +641,9 @@ static const Button buttons[] = {
 #endif
     { ClkStatusText, ShiftMask,       Button3,        spawn,                  SHCMD(TERMINAL " -e $EDITOR ~/.local/src/dwmblocks/config.h")},
     { ClkClientWin,  MODKEY,          Button1,        movemouse,              {0}},
-    { ClkClientWin,  MODKEY,          Button2,        defaultgaps,            {0}},
+    { ClkClientWin,  MODKEY,          Button2,        togglefloating,         {0}},
     { ClkClientWin,  MODKEY,          Button3,        resizemouse,            {0}},
+    /* { ClkClientWin,  MODKEY,          Button2,        defaultgaps,            {0}}, */
     /* { ClkClientWin, MODKEY,           Button4,        incrgaps,               {.i = +1} }, */
     /* { ClkClientWin, MODKEY,           Button5,        incrgaps,               {.i = -1} }, */
     { ClkClientWin, MODKEY,           Button4,        changefocusopacity,     {.f = +0.025}},
@@ -634,5 +661,11 @@ static const Button buttons[] = {
     { ClkRootWin,   0,                Button2,        togglebar,              {0}},
 };
 
+
 /* vim :ts=4 sw=4 sts=4 ft=c syn=c et: */
 
+/* Local Variables:                    */
+/* mode: c-ts-mode                     */
+/* code: utf-8-unix                    */
+/* eval: (rainbow-mode 1)              */
+/* End:                                */
